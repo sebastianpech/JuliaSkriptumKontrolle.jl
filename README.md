@@ -14,7 +14,7 @@ Die Kontrollfunktion muss zum `Dict` `JuliaSkriptumKontrolle.check_functions` hi
 Jeder Kontrollfunktion wird ein Parameter übergeben der das Ergebnis der zu Bewertenden `Expr` beinhaltet.
 Die folgende Funktion überprüft eine Funktion die eine Zahl > 0 quadrieren und für alle anderen Fälle 0 zurück geben soll.
 
-Die Checkfunktion muss einer Fehler verursachen, damit ein korrekter globaler Eintrag gemacht wird ob die Aufgabe korrekt erfüllt wurde.
+Die Checkfunktion muss einen Fehler verursachen, damit ein korrekter globaler Eintrag gemacht wird ob die Aufgabe korrekt erfüllt wurde.
 
 ```julia
 check_functions["1.1"] = function(result)
