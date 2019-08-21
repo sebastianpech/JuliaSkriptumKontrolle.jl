@@ -18,15 +18,9 @@ Mit `JuliaSkriptumKontrolle.passed("1.1")` wird global gespeichert, dass die Auf
 
 ```julia
 check_functions["1.1"] = function(result)
-    checks = [
-        result(2) === 4,
-        result(-2.) === 0.0]
-    if all(checks)
-        passed("1.1")
-        println("Richtig!")
-    else
-        println("Falsch!")
-    end
+    @assert result(2) === 4
+    @assert result(-2.) === 0.0
+    passed("1.1")
 end
 ```
 
@@ -46,12 +40,9 @@ check_functions["1.2"] = function(result)
     res = run_redirected(input=inp,output=out) do
         result()
     end
-    if (out == ["foofoo", "barbar", "bazbaz"] && res == 4)
-        passed("test 002")
-        println("Richtig!")
-    else
-        println("Falsch!")
-    end
+    @assert out == ["foofoo", "barbar", "bazbaz"] 
+    @assert count == 4
+    passed("1.2")
 end
 ```
 
