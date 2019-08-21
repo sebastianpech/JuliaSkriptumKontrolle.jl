@@ -26,6 +26,7 @@ end
 function passed(identifier::AbstractString)
     @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
     check_function_passed[identifier] = true
+    nothing
 end
 
 function sandbox()
