@@ -8,7 +8,7 @@ gestört wird.
 
 ### Kontrolle für Aufgabe 1.1
 
-Die Kontrollfunktion muss zum `Dict` `JuliaSkriptumKontrolle.check_functions` hinzugefügt werden-
+Die Kontrollfunktion muss zum `Dict` `JuliaSkriptumKontrolle.check_functions` hinzugefügt werden.
 Jeder Kontrollfunktion wird ein Parameter übergeben der das Ergebnis der zu Bewertenden `Expr` beinhaltet.
 Die folgende Funktion überprüft eine Funktion die eine Zahl > 0 quadrieren und für alle anderen Fälle 0 zurück geben soll.
 
