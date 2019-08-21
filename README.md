@@ -14,13 +14,12 @@ Die Kontrollfunktion muss zum `Dict` `JuliaSkriptumKontrolle.check_functions` hi
 Jeder Kontrollfunktion wird ein Parameter übergeben der das Ergebnis der zu Bewertenden `Expr` beinhaltet.
 Die folgende Funktion überprüft eine Funktion die eine Zahl > 0 quadrieren und für alle anderen Fälle 0 zurück geben soll.
 
-Mit `JuliaSkriptumKontrolle.passed("1.1")` wird global gespeichert, dass die Aufgabe erfüllt wurde.
+Die Checkfunktion muss einer Fehler verursachen, damit ein korrekter globaler Eintrag gemacht wird ob die Aufgabe korrekt erfüllt wurde.
 
 ```julia
 check_functions["1.1"] = function(result)
     @assert result(2) === 4
     @assert result(-2.) === 0.0
-    passed("1.1")
 end
 ```
 
@@ -42,7 +41,6 @@ check_functions["1.2"] = function(result)
     end
     @assert out == ["foofoo", "barbar", "bazbaz"] 
     @assert count == 4
-    passed("1.2")
 end
 ```
 
