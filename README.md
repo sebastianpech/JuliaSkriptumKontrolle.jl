@@ -17,12 +17,12 @@ Die folgende Funktion überprüft eine Funktion die eine Zahl > 0 quadrieren und
 Mit `JuliaSkriptumKontrolle.passed("1.1")` wird global gespeichert, dass die Aufgabe erfüllt wurde.
 
 ```julia
-JuliaSkriptumKontrolle.check_functions["1.1"] = function(result)
+check_functions["1.1"] = function(result)
     checks = [
         result(2) === 4,
         result(-2.) === 0.0]
     if all(checks)
-        JuliaSkriptumKontrolle.passed("1.1")
+        passed("1.1")
         println("Richtig!")
     else
         println("Falsch!")
@@ -36,18 +36,18 @@ Die Funktion kontrolliert eine Funktion die einen Text von `stdin` einliest und 
 Wird `exit` eingelesen bricht die Funktion ab und gibt die Anzahl an Schleifenzyklen zurück.
 
 ```julia
-JuliaSkriptumKontrolle.check_functions["1.2"] = function(result)
+check_functions["1.2"] = function(result)
     out = String[]
     inp = ["foo", "bar", "baz", "exit"]
     # An output und input können String Arrays übergeben werden.
     # Alle Werte in input werden an stdin geschickt und output
     # beinhaltet nach der Ausführung die an stdout gesendeten
     # Texte.
-    res = JuliaSkriptumKontrolle.run_redirected(input=inp,output=out) do
+    res = run_redirected(input=inp,output=out) do
         result()
     end
     if (out == ["foofoo", "barbar", "bazbaz"] && res == 4)
-        JuliaSkriptumKontrolle.passed("test 002")
+        passed("test 002")
         println("Richtig!")
     else
         println("Falsch!")
