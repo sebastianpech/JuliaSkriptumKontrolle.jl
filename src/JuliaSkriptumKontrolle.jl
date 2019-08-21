@@ -29,7 +29,7 @@ function passed(identifier::AbstractString)
 end
 
 function sandbox()
-    sandbox_name = "SB_$(basename(tempname()))"
+    sandbox_name = "SB_$(splitext(basename(tempname())) |> first)"
     Core.eval(Main, Meta.parse("module $(sandbox_name)\nend"))
 end
 
