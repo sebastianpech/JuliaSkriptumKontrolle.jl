@@ -26,12 +26,8 @@ end
 
 # Define check function for test 001
 JuliaSkriptumKontrolle.check_functions["test 001"] = function(result)
-    checks = [
-        result(2) === 4,
-        result(-2.) === 0.0]
-    all(checks) && JuliaSkriptumKontrolle.passed("test 001")
-    # This is just returned for the test
-    checks
+    @assert result(2) === 4
+    @assert result(-2.) === 0.0
 end
 
 # Define check function test 002
@@ -42,34 +38,30 @@ JuliaSkriptumKontrolle.check_functions["test 002"] = function(result)
         result()
     end
     # Mark as passed
-    (out == ["foofoo", "barbar", "bazbaz"] &&
-     res == 4) && JuliaSkriptumKontrolle.passed("test 002")
-    # Only for testings
-    out, res
+    @assert out == ["foofoo", "barbar", "bazbaz"]
+    @assert res == 4
 end
 
 @testset "Check" begin
     @testset "test 001" begin
-        res = @Aufgabe "test 001" function square_if_positive(x)
+        @Aufgabe "test 001" function square_if_positive(x)
             if x < 0
                 return zero(x)
             else
                 return x^2
             end
         end
-        @test all(res)
         @test JuliaSkriptumKontrolle.check_function_passed["test 001"]
-        res = @Aufgabe "test 001" function square_if_positive(x)
+        @test_throws AssertionError @Aufgabe "test 001" function square_if_positive(x)
             if x < 0
                 return 0
             else
                 return x^2
             end
         end
-        @test res == [true,false]
     end
     @testset "test 002" begin
-        out,count = @Aufgabe "test 002" function double_input()
+        @Aufgabe "test 002" function double_input()
             counter = 0
             while true
                 inp = readline()
@@ -81,8 +73,6 @@ end
             end
             return counter
         end
-        @test out == ["foofoo", "barbar", "bazbaz"]
-        @test count == 4
     end
     @test !JuliaSkriptumKontrolle.check_function_passed["test 001"]
     @test JuliaSkriptumKontrolle.check_function_passed["test 002"]

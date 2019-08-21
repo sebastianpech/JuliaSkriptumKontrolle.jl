@@ -12,6 +12,7 @@ macro Aufgabe(identifier::AbstractString, expr)
     quote
         JuliaSkriptumKontrolle.reset_passed($identifier)
         $check_function($result)
+        JuliaSkriptumKontrolle.passed($identifier)
     end
 end
 
