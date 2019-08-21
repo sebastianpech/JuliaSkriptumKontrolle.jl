@@ -1,5 +1,7 @@
 # JuliaSkriptumKontrolle
 
+[![Build Status](https://travis-ci.org/sebastianpech/JuliaSkriptumKontrolle.jl.svg?branch=master)](https://travis-ci.org/sebastianpech/JuliaSkriptumKontrolle.jl)
+
 
 ## Kontrollfunktionen
 Die Kontrollfunktionen sollten im Paket definiert werden, damit der
