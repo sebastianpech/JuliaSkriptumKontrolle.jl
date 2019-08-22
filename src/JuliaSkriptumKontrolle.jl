@@ -167,4 +167,6 @@ function status()
         hlines = [size(table,1)-1,])
 end
 
+include("./Exercises.jl")
+
 end # module
