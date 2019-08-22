@@ -78,7 +78,6 @@ end
     @test JuliaSkriptumKontrolle.check_function_passed["test 002"]
 end
 
-
 @testset "Datadir" begin
     identifier = "1-1"
     dirpath = joinpath(JuliaSkriptumKontrolle.exercise_data_dir,identifier)
@@ -100,3 +99,29 @@ end
     rm(dirpath,recursive=true)
     rm(identifier,recursive=true)
 end
+
+# Define check function for test 001
+JuliaSkriptumKontrolle.check_functions["test-003"] = function(result)
+    result()
+    pwd()
+end
+
+@testset "Temporary WD" begin
+    identifier = "test-003"
+    cwd = pwd()
+
+    dirpath = joinpath(JuliaSkriptumKontrolle.exercise_data_dir,identifier)
+    mkdir(dirpath)
+
+    working_dir = @Aufgabe "test-003" function sometest()
+        touch(joinpath("test-003","file"))
+    end
+
+    @test pwd() == cwd
+    @test working_dir != cwd
+    @test isdir(joinpath(working_dir,identifier))
+    @test isfile(joinpath(working_dir,identifier,"file"))
+    rm(dirpath,recursive=true)
+    rm(working_dir,recursive=true)
+end
+

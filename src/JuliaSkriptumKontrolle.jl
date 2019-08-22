@@ -20,11 +20,22 @@ macro Aufgabe(identifier::AbstractString, expr)
     @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
     check_function = check_functions[identifier]
     result = eval_sandboxed(expr)
+    temp_run_dir = mktempdir()
+    cwd = pwd()
     quote
-        JuliaSkriptumKontrolle.reset_passed($identifier)
-        JuliaSkriptumKontrolle.setup($identifier,force=true)
-        $check_function($result)
-        JuliaSkriptumKontrolle.passed($identifier)
+        try
+            JuliaSkriptumKontrolle.reset_passed($identifier)
+            # Run this in the temporary directory
+            cd($temp_run_dir)
+            JuliaSkriptumKontrolle.setup($identifier,force=true)
+            result = $check_function($result)
+            cd($cwd)
+            JuliaSkriptumKontrolle.passed($identifier)
+            result
+        catch e
+            cd($cwd)
+            rethrow(e)
+        end
     end
 end
 
