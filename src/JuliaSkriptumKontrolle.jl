@@ -2,8 +2,19 @@ module JuliaSkriptumKontrolle
 
 export @Aufgabe
 
+const exercise_data_dir = joinpath(@__DIR__,"..","exercise_data")
+
 check_functions = Dict{String,Function}()
 check_function_passed = Dict{String,Bool}()
+setup_functions = Dict{String,Function}()
+
+function setup(identifier::AbstractString;force::Bool=false)
+    # Copy data dir if exists
+    data_dir = joinpath(exercise_data_dir,identifier)
+    isdir(data_dir) && cp(data_dir,joinpath(pwd(),identifier),force=force)
+    # Call setup function
+    identifier in keys(setup_functions) && setup_functions[identifier]()
+end
 
 macro Aufgabe(identifier::AbstractString, expr)
     @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
@@ -11,6 +22,7 @@ macro Aufgabe(identifier::AbstractString, expr)
     result = eval_sandboxed(expr)
     quote
         JuliaSkriptumKontrolle.reset_passed($identifier)
+        JuliaSkriptumKontrolle.setup($identifier,force=true)
         $check_function($result)
         JuliaSkriptumKontrolle.passed($identifier)
     end

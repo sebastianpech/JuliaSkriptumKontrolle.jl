@@ -77,3 +77,19 @@ end
     @test !JuliaSkriptumKontrolle.check_function_passed["test 001"]
     @test JuliaSkriptumKontrolle.check_function_passed["test 002"]
 end
+ 
+@testset "Datadir" begin
+    identifier = "1-1"
+    dirpath = joinpath(JuliaSkriptumKontrolle.exercise_data_dir,identifier)
+    mkdir(dirpath)
+    open(joinpath(dirpath,"testfile"),"w") do f
+        write(f,"nothing")
+    end
+    JuliaSkriptumKontrolle.setup(identifier)
+    @test isdir(identifier)
+    @test isfile(joinpath(identifier,"testfile"))
+    @test_throws ArgumentError JuliaSkriptumKontrolle.setup(identifier)
+    JuliaSkriptumKontrolle.setup(identifier,force=true)
+    rm(dirpath,recursive=true)
+    rm(identifier,recursive=true)
+end
