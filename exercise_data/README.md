@@ -1,1 +1,1 @@
-Findet die `setup(identifier)` Funktion in diesem Order eine Order mit dem Namen `identifier` wird dieser in working directory kopiert.
+Findet die `setup(identifier)` Funktion in diesem Ordner eine Ordner mit dem Namen `identifier` wird dieser ins "working directory" kopiert.
