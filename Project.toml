@@ -3,5 +3,9 @@ uuid = "e7d8a85d-98e7-4e58-bbcb-2b33d0f590e8"
 authors = ["Sebastian Pech <sebastian.pech@me.com>"]
 version = "0.1.0"
 
-[deps]
+[extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+
+[targets]
+test = ["Test","LinearAlgebra"]

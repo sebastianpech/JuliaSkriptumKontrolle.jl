@@ -58,7 +58,19 @@ function sandbox()
     Core.eval(Main, Meta.parse("module $(sandbox_name)\nend"))
 end
 
-eval_sandboxed(expr::Expr) = Core.eval(sandbox(),expr)
+function eval_sandboxed(expr::Expr)
+    sb = sandbox()
+    # Eval part by part if is a block
+    if expr.head == :block
+    N = length(expr.args)
+        for (i,part) in enumerate(expr.args)
+            result = Core.eval(sb,part)
+            i == N && return result
+        end
+    else
+        return Core.eval(sb,expr)
+    end
+end
 
 function run_redirected(f::Function;input::Vector{<:AbstractString}=String[],output::Vector{<:AbstractString}=String[])
     _stdin = stdin

@@ -42,6 +42,12 @@ JuliaSkriptumKontrolle.check_functions["test 002"] = function(result)
     @assert res == 4
 end
 
+# Define check function for test 004
+JuliaSkriptumKontrolle.check_functions["test 004"] = function(result)
+    @assert result == 32
+end
+
+
 @testset "Check" begin
     @testset "test 001" begin
         @Aufgabe "test 001" function square_if_positive(x)
@@ -76,6 +82,23 @@ end
     end
     @test !JuliaSkriptumKontrolle.check_function_passed["test 001"]
     @test JuliaSkriptumKontrolle.check_function_passed["test 002"]
+    @testset "Block Expressions" begin
+        @Aufgabe "test 004" begin
+            using LinearAlgebra
+            a = [1,2,3]
+            b = [4,5,6]
+            a ⋅ b
+        end
+        @test JuliaSkriptumKontrolle.check_function_passed["test 004"]
+
+        @test_throws AssertionError @Aufgabe "test 004" begin
+            using LinearAlgebra
+            a = [1,2,3]
+            b = [7,5,6]
+            a ⋅ b
+        end
+        @test !JuliaSkriptumKontrolle.check_function_passed["test 004"]
+    end
 end
 
 @testset "Datadir" begin
@@ -124,4 +147,3 @@ end
     rm(dirpath,recursive=true)
     rm(working_dir,recursive=true)
 end
-
