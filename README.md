@@ -2,6 +2,16 @@
 
 [![Build Status](https://travis-ci.org/sebastianpech/JuliaSkriptumKontrolle.jl.svg?branch=master)](https://travis-ci.org/sebastianpech/JuliaSkriptumKontrolle.jl)
 
+## Sandbox
+
+Jeder Kontrolle wird in einer eigene Sandbox in einem temporären Verzeichnis ausgeführt.
+
+## Setup
+
+Mit dem `Dict` `setup_functions` kann eine Funktion definiert werden die vor dem Aufruf der Kontrollfunktion aufgerufen wird.
+Die Funktion `setup(identifier)` soll auch vom User verwendet werden, falls extra Daten oder sonstige Aktion vor dem Start der Aufgabe notwendig sind.
+
+Speziell zum kopieren von Daten gibt es den Ordern `exercise_data`. Findet die Funktion `setup` dort eine Order der wie der Aufgaben `identifer` lautet, wird der gesamte Order ins aktuelle Verzeichnis kopiert.
 
 ## Kontrollfunktionen
 Die Kontrollfunktionen sollten im Paket definiert werden, damit der
