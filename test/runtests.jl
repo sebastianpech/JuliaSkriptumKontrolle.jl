@@ -29,6 +29,8 @@ JuliaSkriptumKontrolle.check_functions["test 001"] = function(result)
     @assert result(2) === 4
     @assert result(-2.) === 0.0
 end
+JuliaSkriptumKontrolle.set_score("test 001",1)
+
 
 # Define check function test 002
 JuliaSkriptumKontrolle.check_functions["test 002"] = function(result)
@@ -41,12 +43,13 @@ JuliaSkriptumKontrolle.check_functions["test 002"] = function(result)
     @assert out == ["foofoo", "barbar", "bazbaz"]
     @assert res == 4
 end
+JuliaSkriptumKontrolle.set_score("test 002",2.5)
 
 # Define check function for test 004
 JuliaSkriptumKontrolle.check_functions["test 004"] = function(result)
     @assert result == 32
 end
-
+JuliaSkriptumKontrolle.set_score("test 004",0.5)
 
 @testset "Check" begin
     @test all(JuliaSkriptumKontrolle.get_state.(["test 001", "test 002", "test 004"]) .== :notdone)
@@ -129,6 +132,7 @@ JuliaSkriptumKontrolle.check_functions["test-003"] = function(result)
     result()
     pwd()
 end
+JuliaSkriptumKontrolle.set_score("test-003",5.0)
 
 @testset "Temporary WD" begin
     identifier = "test-003"
@@ -147,4 +151,9 @@ end
     @test isfile(joinpath(working_dir,identifier,"file"))
     rm(dirpath,recursive=true)
     rm(working_dir,recursive=true)
+end
+
+@testset "Scores" begin
+    exercises = sort(keys(JuliaSkriptumKontrolle.check_functions)|>collect)
+    @test sum(JuliaSkriptumKontrolle.get_score.(exercises)) == 7.5
 end

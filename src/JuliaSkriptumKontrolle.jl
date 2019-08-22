@@ -1,12 +1,27 @@
 module JuliaSkriptumKontrolle
 
+using PrettyTables
+
 export @Aufgabe
 
 const exercise_data_dir = joinpath(@__DIR__,"..","exercise_data")
 
 check_functions = Dict{String,Function}()
+exercise_score = Dict{String,Float64}()
 check_function_state = Dict{String,Symbol}()
 setup_functions = Dict{String,Function}()
+
+function set_score(identifier::AbstractString,score)
+    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+    exercise_score[identifier] = score
+end
+
+function get_score(identifier::AbstractString)
+    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+    @assert identifier in keys(exercise_score) "Aufgabe $identifier hat keine eingetragenen Punkte!"
+    get_state(identifier) == :passed && return exercise_score[identifier]
+    return 0.0
+end
 
 function setup(identifier::AbstractString;force::Bool=false)
     # Copy data dir if exists
@@ -49,6 +64,15 @@ function get_state(identifier::AbstractString)
     identifier in keys(check_function_state) || return :notdone
     return check_function_state[identifier]
 end
+
+function get_state_string(identifier::AbstractString)
+    get_state_string(Val(get_state(identifier)))
+end
+
+get_state_string(::Val{:notdone}) = "?"
+get_state_string(::Val{:failed}) = "×"
+get_state_string(::Val{:passed}) = "✓"
+
 
 function reset_passed(identifier::AbstractString)
     check_function_state[identifier] = :notdone
@@ -114,6 +138,33 @@ function run_redirected(f::Function;input::Vector{<:AbstractString}=String[],out
         close(in_wr)
         rethrow(e)
     end
+end
+
+function status()
+    exercises = sort(keys(check_functions)|>collect)
+    h1 = Highlighter(
+        (data,i,j)-> (data[i,2] == "✓"),
+        bold=false,foreground=:green)
+
+    h2 = Highlighter(
+        (data,i,j)-> (data[i,2] == "×"),
+        bold=false,foreground=:red)
+
+    h3 = Highlighter(
+        (data,i,j)-> (i == size(data,1)),
+        bold=true)
+
+    scores = get_score.(exercises)
+    table = hcat(exercises,
+                 get_state_string.(exercises),
+                 scores)
+    table = vcat(table,
+                 ["" "∑" sum(scores)])
+
+    pretty_table(
+        table,["Aufgabe","Status","Punkte"],
+        highlighters = (h1,h2,h3),
+        hlines = [size(table,1)-1,])
 end
 
 end # module
