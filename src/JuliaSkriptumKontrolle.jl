@@ -5,7 +5,7 @@ export @Aufgabe
 const exercise_data_dir = joinpath(@__DIR__,"..","exercise_data")
 
 check_functions = Dict{String,Function}()
-check_function_passed = Dict{String,Bool}()
+check_function_state = Dict{String,Symbol}()
 setup_functions = Dict{String,Function}()
 
 function setup(identifier::AbstractString;force::Bool=false)
@@ -34,6 +34,7 @@ macro Aufgabe(identifier::AbstractString, expr)
             result
         catch e
             cd($cwd)
+            JuliaSkriptumKontrolle.failed($identifier)
             rethrow(e)
         end
     end
@@ -43,15 +44,29 @@ macro Aufgabe(expr::Expr)
     error("Aufgabennummer nicht angegeben. Das Format ist @Aufgabe \"x.y.z\" ...")
 end
 
+function get_state(identifier::AbstractString)
+    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+    identifier in keys(check_function_state) || return :notdone
+    return check_function_state[identifier]
+end
+
 function reset_passed(identifier::AbstractString)
-    check_function_passed[identifier] = false
+    check_function_state[identifier] = :notdone
+    nothing
 end
 
 function passed(identifier::AbstractString)
     @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
-    check_function_passed[identifier] = true
+    check_function_state[identifier] = :passed
     nothing
 end
+
+function failed(identifier::AbstractString)
+    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+    check_function_state[identifier] = :failed
+    nothing
+end
+
 
 function sandbox()
     sandbox_name = "SB_$(splitext(basename(tempname())) |> first)"

@@ -49,6 +49,7 @@ end
 
 
 @testset "Check" begin
+    @test all(JuliaSkriptumKontrolle.get_state.(["test 001", "test 002", "test 004"]) .== :notdone)
     @testset "test 001" begin
         @Aufgabe "test 001" function square_if_positive(x)
             if x < 0
@@ -57,7 +58,7 @@ end
                 return x^2
             end
         end
-        @test JuliaSkriptumKontrolle.check_function_passed["test 001"]
+        @test JuliaSkriptumKontrolle.get_state("test 001") == :passed
         @test_throws AssertionError @Aufgabe "test 001" function square_if_positive(x)
             if x < 0
                 return 0
@@ -65,6 +66,7 @@ end
                 return x^2
             end
         end
+        @test JuliaSkriptumKontrolle.get_state("test 001") == :failed
     end
     @testset "test 002" begin
         @Aufgabe "test 002" function double_input()
@@ -79,9 +81,8 @@ end
             end
             return counter
         end
+        @test JuliaSkriptumKontrolle.get_state("test 002") == :passed
     end
-    @test !JuliaSkriptumKontrolle.check_function_passed["test 001"]
-    @test JuliaSkriptumKontrolle.check_function_passed["test 002"]
     @testset "Block Expressions" begin
         @Aufgabe "test 004" begin
             using LinearAlgebra
@@ -89,7 +90,7 @@ end
             b = [4,5,6]
             a ⋅ b
         end
-        @test JuliaSkriptumKontrolle.check_function_passed["test 004"]
+        @test JuliaSkriptumKontrolle.get_state("test 004") == :passed
 
         @test_throws AssertionError @Aufgabe "test 004" begin
             using LinearAlgebra
@@ -97,7 +98,7 @@ end
             b = [7,5,6]
             a ⋅ b
         end
-        @test !JuliaSkriptumKontrolle.check_function_passed["test 004"]
+        @test JuliaSkriptumKontrolle.get_state("test 004") == :failed
     end
 end
 
