@@ -25,9 +25,9 @@ set_score("11.3.1",1.0)
 # (λ=eigenval, Φ=eigenvec, A_neu=reconstructed)
 
 check_functions["11.3.2"] = function(result)
-    @assert sort(collect(keys(results))) == sort((:λ, :Φ, :A_neu))
-    @assert results.λ ≈ [-0.33159580731341975 2.7486771373723475 6.58291866994107]
-    @assert results.Φ ≈ [ -0.443127   0.0985892  -0.160077
+    @assert sort(collect(keys(result))) == sort((:λ, :ϕ, :A_neu))
+    @assert result.λ ≈ [-0.33159580731341975 2.7486771373723475 6.58291866994107]
+    @assert result.Φ ≈ [ -0.443127   0.0985892  -0.160077
                           0.266015  -0.784562   -0.0893556
                           0.856081  -0.612162   -0.983052]
 end
