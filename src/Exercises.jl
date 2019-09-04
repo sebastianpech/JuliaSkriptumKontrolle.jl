@@ -13,13 +13,13 @@
 # 10. Funktionen
 # 10.4.1 Dreimal printen
 check_functions["10.4.1"] = function(result)
-	out = Array{Any,1}()
-	inp = ["foo",4]
+	out = String[]
+	inp = ["foo","zack"]
 	res = run_redirected(input=inp,output=out) do
 		result()
 	end
-	@assert out != ["foofoofoo","444"] "Abstand vergessen"
-	@assert out == ["foo foo foo","4 4 4"]
+	@assert out != ["foofoofoo","zackzackzack"] "Abstand vergessen"
+	@assert out == ["foo foo foo","zack zack zack"]
 end
 # 10.4.3 Kreisfläche
 
