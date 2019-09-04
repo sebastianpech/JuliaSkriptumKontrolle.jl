@@ -11,6 +11,16 @@
 #    set_score("excercise identifier",score)
 
 # 10. Funktionen
+# 10.4.1 Dreimal printen
+check_functions["10.4.1"] = function(result)
+	out = Array{Any,1}()
+	inp = ["foo",4]
+	res = run_redirected(input=inp,output=out) do
+		result()
+	end
+	@assert out != ["foofoofoo","444"] "Abstand vergessen"
+	@assert out == ["foo foo foo","4 4 4"]
+end
 # 10.4.3 Kreisfläche
 
 check_functions["10.4.3"] = function(result)
