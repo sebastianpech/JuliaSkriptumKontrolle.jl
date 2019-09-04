@@ -10,6 +10,15 @@
 # 
 #    set_score("excercise identifier",score)
 
+# 10. Funktionen
+# 10.4.3 Kreisfläche
+
+check_functions["10.4.1"] = function(result)
+	@assert result(3) == 3^2*π
+	@assert result(5) == 5^2*π
+end
+set_score("10.4.1",1.0)
+
 # 11. Lineare Algebra
 
 # 11.3.1 Löse das Gleichungsystem
