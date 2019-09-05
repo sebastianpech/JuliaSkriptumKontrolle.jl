@@ -10,9 +10,9 @@
 # 
 #    set_score("excercise identifier",score)
 
-# 10. Funktionen
-# 10.4.1 Dreimal printen
-check_functions["10.4.1"] = function(result)
+# 8. Funktionen
+# 8.4.1 Dreimal printen
+check_functions["8.4.1"] = function(result)
 	out = String[]
 	inp = ["foo","zack"]
 	res = run_redirected(input=inp,output=out) do
@@ -21,13 +21,85 @@ check_functions["10.4.1"] = function(result)
 	@assert out != ["foofoofoo","zackzackzack"] "Abstand vergessen"
 	@assert out == ["foo foo foo","zack zack zack"]
 end
-# 10.4.3 Kreisfläche
+set_score("8.4.1",1.0)
 
-check_functions["10.4.3"] = function(result)
+# 8.4.2 Verketten
+check_functions["8.4.2"] = function(result)
+	f(x) = x+5
+	g(x) = x^3
+	@assert result(f,g,3) == 3^3+5
+	@assert result(length,g,"foo") == 9
+end
+set_score("8.4.2",1.0)
+
+# 8.4.3 Kreisfläche
+
+check_functions["8.4.3"] = function(result)
 	@assert result(3) == 3^2*π
 	@assert result(5) == 5^2*π
 end
-set_score("10.4.3",1.0)
+set_score("8.4.3",1.0)
+
+# 8.4.4 Kreisumfang
+
+check_functions["8.4.4"] = function(result)
+	@assert result(3) == 2*3*π
+	@assert result(5) == 2*5*π
+end
+set_score("8.4.4",1.0)
+
+# 8.4.5 Kreis: Eigenschaften printen
+check_functions["8.4.5"] = function(result)
+	
+end
+set_score("8.4.5",1.0)
+
+# 9 Arrays, Dicts, Tuples
+# 9.4.1 Drei Arrays zusammenhängen
+check_functions["9.4.1"] = function(result)
+	n1 = [1,2]; n2 = [3,4]; n3 = [5,6]
+	s1 = ["aa","bb"]
+	c1 = ['a', 'b']
+	@assert result(a,b,c) == [1,2,3,4,5,6]
+	@assert result(n1,s1,c1) == [1,2,"aa","bb",'a','b']
+end
+set_score("9.4.1",1.0)
+
+# 9.4.2 Inneres eines Arrays
+check_functions["9.4.2"] = function(result)
+	
+end
+set_score("9.4.2",1.0)
+
+# 9.4.3 Ist das Array sortiert?
+check_functions["9.4.3"] = function(result)
+	
+end
+set_score("9.4.3",1.0)
+
+# 9.4.4 Anagram-Test
+check_functions["9.4.4"] = function(result)
+	
+end
+set_score("9.4.4",1.0)
+
+# 9.4.5 N-tes Element eines Dictionaries ausgeben
+check_functions["9.4.5"] = function(result)
+	
+end
+set_score("9.4.5",1.0)
+
+# 9.4.6 Dictionaries zusammenfügen
+check_functions["9.4.6"] = function(result)
+	
+end
+set_score("9.4.6",1.0)
+
+# 9.4.7 Tuples zusammenfügen
+check_functions["9.4.7"] = function(result)
+	
+end
+set_score("9.4.7",1.0)
 
 # 11. Lineare Algebra
 
