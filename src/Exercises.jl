@@ -67,37 +67,48 @@ set_score("9.4.1",1.0)
 
 # 9.4.2 Inneres eines Arrays
 check_functions["9.4.2"] = function(result)
-	
+	a = [9,8,7,6,5]
+	b = [8,7,6]
+	c = [7]
+	@assert result(a) == b
+	@assert result(b) == c
+	@assert result(c) == []
 end
 set_score("9.4.2",1.0)
 
 # 9.4.3 Ist das Array sortiert?
 check_functions["9.4.3"] = function(result)
-	
+	@assert result(['s','p','a','m']) == false
+	@assert result(['a','m','p','s']) == true
 end
 set_score("9.4.3",1.0)
 
 # 9.4.4 Anagram-Test
 check_functions["9.4.4"] = function(result)
-	
+	@assert result("spam","amps") == true
+	@assert result("spam","eggs") == false
 end
 set_score("9.4.4",1.0)
 
 # 9.4.5 N-tes Element eines Dictionaries ausgeben
 check_functions["9.4.5"] = function(result)
-	
+	d = Dict("aa"=>4,"pp"=>1,"dd"=>3,"kk"=>19)
+	@assert result(d,1) == 4
+	@assert result(d,3) == 19
 end
 set_score("9.4.5",1.0)
 
 # 9.4.6 Dictionaries zusammenfügen
 check_functions["9.4.6"] = function(result)
-	
+	d1 = Dict("aa"=>4,"pp"=>1,"dd"=>3,"kk"=>19)
+	d2 = Dict("hh"=>5,"gg"=>31)
+	@assert result(d1,d2) == Dict("aa"=>4,"pp"=>1,"dd"=>3,"kk"=>19,"hh"=>5,"gg"=>31)
 end
 set_score("9.4.6",1.0)
 
 # 9.4.7 Tuples zusammenfügen
 check_functions["9.4.7"] = function(result)
-	
+	@assert result(('a','b'),('c','d','e')) == ('a','b','c','d','e')
 end
 set_score("9.4.7",1.0)
 
