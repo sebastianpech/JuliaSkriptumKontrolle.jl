@@ -54,6 +54,23 @@ check_functions["1.2"] = function(result)
 end
 ```
 
+### Kontrolle für Aufgaben die bestimmte Funktion verwenden oder nicht verwenden müssen
+
+Für Beispiele wo eine bereits vorhanden Funktion programmiert werden soll, kann die Lösung sehr einfach 
+durch Aufruf dieser Funktion erfolgen. Um das zu verhindern stehen die Macros `@dos` und `@donts` zur Verfügung.
+
+Im folgenden Beispiel darf in die Funktion nicht `abs` oder `sqrt` verwenden, muss aber `sign` verwenden.
+Wird eine der angegeben Funktionen aufgerufen, wird ein `AssertionError` ausgegeben und die Aufgabe wird als nicht gelöst markiert.
+
+```julia
+check_functions["1.3"] = function(result)
+    @donts result(2) :abs :sqrt
+    @dos result(2) :sign
+    @assert result(2) === 4
+    @assert result(-2.) === 0.0
+end
+```
+
 ## Kontrolle für den Benutzer
 
 Zur Kontrolle kann das Macro `@Aufgabe "Identifikation" Expr` verwendet werden.
