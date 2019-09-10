@@ -1,6 +1,7 @@
 module JuliaSkriptumKontrolle
 
 using PrettyTables
+using Cassette
 
 export @Aufgabe
 
@@ -165,6 +166,66 @@ function status()
         table,["Aufgabe","Status","Punkte"],
         highlighters = (h1,h2,h3),
         hlines = [size(table,1)-1,])
+end
+
+Cassette.@context CounterCtx
+
+function isrelatedfunction(f,name)
+    fname = String(typeof(f).name.name)
+    if fname == "#$name"
+        return true
+    end
+    if startswith(fname,"#kw##$name")
+        return true
+    end
+    if startswith(fname,"##$name#")
+        return true
+    end
+    return false
+end
+
+function check_count_function(ctx::CounterCtx,f)
+    for fname in keys(ctx.metadata)
+        if isrelatedfunction(f,fname)
+            ctx.metadata[fname] += 1
+        end
+    end
+end
+
+init_ctx(::Type{CounterCtx},syms::Symbol...) =  CounterCtx(metadata=Dict([d=>0 for d in syms]))
+
+Cassette.posthook(ctx::CounterCtx, ::Any, f, args...) = check_count_function(ctx,f)
+
+join_comma_and(a) = "$a"
+join_comma_and(a,b) = "$a und $b"
+join_comma_and(c...) = join(c[1:end-1],", ")*" und $(c[end])"
+
+function assert_donts(calls)
+    invalid = ["'"*string(x.first)*"'" for x in calls if x.second > 0]
+    @assert length(invalid) == 0 "Verwendung von $(join_comma_and(invalid...)) nicht erlaubt!"
+    nothing
+end
+
+function assert_dos(calls)
+    invalid = ["'"*string(x.first)*"'" for x in calls if x.second == 0]
+    @assert length(invalid) == 0 "Verwendung von $(join_comma_and(invalid...)) erforderlich!"
+    nothing
+end
+
+macro dos(fcall,ex...)
+    esc(quote
+        cnt = JuliaSkriptumKontrolle.init_ctx(JuliaSkriptumKontrolle.CounterCtx,$(ex...))
+        JuliaSkriptumKontrolle.Cassette.@overdub cnt $fcall
+        JuliaSkriptumKontrolle.assert_dos(cnt.metadata)
+        end)
+end
+
+macro donts(fcall,ex...)
+    esc(quote
+        cnt = JuliaSkriptumKontrolle.init_ctx(JuliaSkriptumKontrolle.CounterCtx,$(ex...))
+        JuliaSkriptumKontrolle.Cassette.@overdub cnt $fcall
+        JuliaSkriptumKontrolle.assert_donts(cnt.metadata)
+        end)
 end
 
 include("./Exercises.jl")

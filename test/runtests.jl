@@ -1,5 +1,6 @@
 using Test
 using JuliaSkriptumKontrolle
+import JuliaSkriptumKontrolle: @dos, @donts
 
 @testset "Sandbox" begin
     @test JuliaSkriptumKontrolle.eval_sandboxed(:(1+1)) == 2
@@ -157,3 +158,73 @@ end
     exercises = sort(keys(JuliaSkriptumKontrolle.check_functions)|>collect)
     @test sum(JuliaSkriptumKontrolle.get_score.(exercises)) == 7.5
 end
+
+const hiding_this = abs
+
+# Define check function calculate abs without using abs
+JuliaSkriptumKontrolle.check_functions["abstest"] = function(result)
+    @donts result(10) :abs
+    @dos result(10) :sign
+    numbers = rand(100).-0.5
+    @assert all(result.(numbers) .== abs.(numbers))
+end
+
+
+@testset "Do's and Dont's" begin
+    function my_test_function(x,y)
+        abs(x)
+        abs(y)
+        sqrt(x)
+        max(x,y)
+    end
+
+    @test (@dos my_test_function(10,1) :abs) == nothing
+    @test (@dos my_test_function(10,1) :abs :sqrt) == nothing
+    @test_throws AssertionError (@dos my_test_function(10,1) :abs :min)
+    @test_throws AssertionError (@dos my_test_function(10,1) :min)
+
+    @test (@donts my_test_function(10,1) :sum) == nothing
+    @test (@donts my_test_function(10,1) :sum :mul!) == nothing
+    @test_throws AssertionError (@donts my_test_function(10,1) :abs :min)
+    @test_throws AssertionError (@donts my_test_function(10,1) :abs)
+
+    function sneaky_test_function(x,y)
+        hiding_this(x)
+        hiding_this(y)
+        sqrt(x)
+        max(x,y)
+    end
+
+    @test_throws AssertionError (@donts sneaky_test_function(10,1) :abs)
+
+    cnt = JuliaSkriptumKontrolle.init_ctx(JuliaSkriptumKontrolle.CounterCtx,:abs)
+    JuliaSkriptumKontrolle.Cassette.@overdub cnt sneaky_test_function(10,1)
+    @test cnt.metadata[:abs] == 2
+
+    @test_throws AssertionError (@Aufgabe "abstest" function my_abs(x)
+                                 abs(x)
+                                 end)
+    @test JuliaSkriptumKontrolle.get_state("abstest") == :failed
+
+    @test_throws AssertionError (@Aufgabe "abstest" begin
+                                 const hiding_this = abs
+                                 function my_abs(x)
+                                 hiding_this(x)
+                                 end
+                                 end)
+
+    @test JuliaSkriptumKontrolle.get_state("abstest") == :failed
+    @Aufgabe "abstest" function my_abs(x)
+        return sign(x)*x
+    end
+    @test JuliaSkriptumKontrolle.get_state("abstest" ) == :passed
+
+    @test_throws AssertionError (@Aufgabe "abstest" function my_abs(x)
+                                 x < 0 && return -x
+                                 return x
+                                 end)
+
+    @test JuliaSkriptumKontrolle.get_state("abstest") == :failed
+
+end
+
