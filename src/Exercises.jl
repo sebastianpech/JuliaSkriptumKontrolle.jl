@@ -31,6 +31,7 @@ check_functions["3.5.1"] = function(result)
         end
     end
 end
+set_score("3.5.1",1.0)
 
 # 7. Funktionen
 # 7.4.1 Dreimal printen
