@@ -137,34 +137,44 @@ set_score("8.4.7",1.0)
 
 # 10. Lineare Algebra
 
-# 10.3.1 Löse das Gleichungsystem
-
-check_functions["10.3.1"] = function(result)
-    @assert all(result .≈ [-63.24999999999998, 45.833333333333314, 131.0833333333333])
+using LinearAlgebra
+# 10.3.1 Eindeutige Lösbarkeit von linearen Gleichungssystemen
+check_functions["10.3.1"] = function(lösbar)
+    @assert lösbar([1 -1
+            2  3],[22, 11])
+    @assert !lösbar([1 -1
+            2  3
+            9 -1],[22, 11, 3])
+    @assert lösbar([1 3
+            2  8
+            3 11],[9, -3, 6])
+    @assert !lösbar([1 1
+                    2 2],[2, 3])
+    @assert lösbar(rand(3,3),rand(3))
 end
 set_score("10.3.1",1.0)
 
-
-# 10.3.2 Verwende die Funktionen eigvals und eigvecs
-# Result must be a named dict with
-# (eigenwerte=eigenval, eigenvektoren=eigenvec, rekonstruiert=reconstructed)
+# 10.3.2 Löse das Gleichungsystem
 
 check_functions["10.3.2"] = function(result)
-    @assert sort(collect(keys(result))) == sort([ :eigenwerte, :eigenvektoren, :rekonstruiert ]) "Die letzte Zeile muss (eigenwerte=..., eigenvektoren=..., rekonstruiert=...) lauten, wobei eigenwerte der Vector aller Eigenwerte, eigenvektoren eine Matrix aller Eigenvektoren und rekonstruiert die rekonstruierte Matrix sein muss."
-    @assert all(isapprox.(result.eigenwerte, [-0.33159580731341975, 2.7486771373723475, 6.58291866994107],atol=1e-4)) "Eigenwerte falsch berechnet."
-    @assert all(isapprox.(result.eigenvektoren, [ -0.443127   0.0985892  -0.160077
-                                                  0.266015  -0.784562   -0.0893556
-                                                  0.856081  -0.612162   -0.983052], atol=1e-4)) "Eigenvektoren falsch berechnet."
-    @assert all(isapprox.(result.rekonstruiert,[1 -1 1
-                                                    2  3 0
-                                                    10 -0.5 5],atol=1e-4)) "Fehler beim Rekonstruieren der Matrix."
+    @assert all(result .≈ [-63.24999999999998, 45.833333333333314, 131.0833333333333])
 end
 set_score("10.3.2",1.0)
 
-# 10.3.3 Schreibe eine funktion zum Berechne des Winkels zwischen zwei Vektoren v1 und v2
-using LinearAlgebra
 
-check_functions["10.3.3"] = function(result)
+# 10.3.3 Eigenwerte und Eigenvektoren
+
+check_functions["10.3.3"] = function(rekonstruiere)
+    As = [rand(x,x) for x in [rand(3:10) for _ in 1:10]]
+    λ = eigvals.(As)
+    ϕ = eigvecs.(As)
+    @assert all(rekonstruiere.(λ,ϕ) .≈ As) "Fehler beim Rekonstruieren der Matrix."
+end
+set_score("10.3.3",1.0)
+
+# 10.3.3 Schreibe eine funktion zum Berechne des Winkels zwischen zwei Vektoren v1 und v2
+
+check_functions["10.3.4"] = function(result)
     function check(v1,v2)
         res = result(v1,v2)
         @assert isa(res,Number) "Die Funktion sollte einen Winkel zurück geben."
@@ -175,4 +185,4 @@ check_functions["10.3.3"] = function(result)
     check([3.,1.,9.],[4.,-1.0,-3.])
     check([1,0,0],[1,0,0])
 end
-set_score("10.3.3",1.0)
+set_score("10.3.4",1.0)
