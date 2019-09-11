@@ -115,9 +115,9 @@ end
 function run_redirected(f::Function;input::Vector{<:AbstractString}=String[],output::Vector{<:AbstractString}=String[])
     _stdin = stdin
     _stdout = stdout
+    (in_rd,in_wr) = redirect_stdin()
+    (out_rd,out_wr) = redirect_stdout()
     try
-        (in_rd,in_wr) = redirect_stdin()
-        (out_rd,out_wr) = redirect_stdout()
         # Write input into stdin buffer
         println.(Ref(in_wr),input)
         res = f()
