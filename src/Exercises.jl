@@ -204,3 +204,28 @@ check_functions["11.3.1"] = function(result)
     testit.(numbers,Ref("Ungerade"))
 end
 set_score("10.3.1",1.0)
+
+check_functions["11.3.2"] = function(result)
+    inp = ["3","1.1","ggg","9",""]
+    out = String[]
+    run_redirected(result,input=inp,output=out)
+    expected = ["Radius eingeben: A = 28.27", "U = 18.85", "", "Radius eingeben: A = 3.8", "U = 6.91", "", "Radius eingeben: Falsche Eingabe", "", "Radius eingeben: A = 254.47", "U = 56.55", "", "Radius eingeben: "]
+    for (i,l) in enumerate(expected)
+        @assert i <= length(out) "Erwartete Zeilenlänge stimmt nicht überein."
+        @assert out[i] == l "Erwarte: '$(expected[i])' erhalten: '$(out[i])'"
+    end
+end
+
+check_functions["11.3.3"] = function(result)
+    @assert count([floor(result(1000),digits=0) for _ in 1:100] .== 3.0) > 90 "Falsch berechnet"
+    @assert count([floor(result(1_000_000),digits=1) for _ in 1:20] .== 3.1) > 15 "Falsch berechnet"
+end
+
+check_functions["11.3.4"] = function(result)
+    function check(f,a,b,expected,fname)
+        x = collect(a:0.0001:b)
+        @assert isapprox(result(x,f.(x)),expected,atol=1e-4) "Falsches Ergebnis für die Funktion '$fname' von '$a' nach '$b'"
+    end
+    check(x->cos(x^3),-2,1,1.78718,"cos(x^3)")
+    check(x->(x^2/(1+sin(x))),-1,3,6.84768,"(x^2/(1+sin(x))")
+end
