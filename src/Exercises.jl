@@ -186,3 +186,21 @@ check_functions["10.3.4"] = function(result)
     check([1,0,0],[1,0,0])
 end
 set_score("10.3.4",1.0)
+
+# 12. Controlflow
+
+check_functions["11.3.1"] = function(result)
+    function testit(number,expected)
+        out = String[]
+        run_redirected(output=out) do
+            result(number)
+        end
+        @assert length(out) == 1 "Mehr als eine Zeile ausgegeben!"
+        @assert first(out) == expected "Erwartete Ausgabe für '$number' ist '$expected'."
+    end
+    numbers = [rand(2:2:100) for _ in 1:10]
+    testit.(numbers,Ref("Gerade"))
+    numbers = [rand(1:2:101) for _ in 1:10]
+    testit.(numbers,Ref("Ungerade"))
+end
+set_score("10.3.1",1.0)
