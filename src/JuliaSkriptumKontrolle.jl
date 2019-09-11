@@ -47,12 +47,12 @@ macro Aufgabe(identifier::AbstractString, expr)
             result = $check_function($result)
             cd($cwd)
             JuliaSkriptumKontrolle.passed($identifier)
-            result
         catch e
             cd($cwd)
             JuliaSkriptumKontrolle.failed($identifier)
             rethrow(e)
         end
+        nothing
     end
 end
 
