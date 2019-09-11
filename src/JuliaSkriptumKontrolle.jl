@@ -47,12 +47,12 @@ macro Aufgabe(identifier::AbstractString, expr)
             result = $check_function($result)
             cd($cwd)
             JuliaSkriptumKontrolle.passed($identifier)
-            result
         catch e
             cd($cwd)
             JuliaSkriptumKontrolle.failed($identifier)
             rethrow(e)
         end
+        nothing
     end
 end
 
@@ -115,9 +115,9 @@ end
 function run_redirected(f::Function;input::Vector{<:AbstractString}=String[],output::Vector{<:AbstractString}=String[])
     _stdin = stdin
     _stdout = stdout
+    (in_rd,in_wr) = redirect_stdin()
+    (out_rd,out_wr) = redirect_stdout()
     try
-        (in_rd,in_wr) = redirect_stdin()
-        (out_rd,out_wr) = redirect_stdout()
         # Write input into stdin buffer
         println.(Ref(in_wr),input)
         res = f()
