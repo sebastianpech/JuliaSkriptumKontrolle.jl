@@ -247,3 +247,22 @@ check_functions["11.3.5.2"] = function(result)
     @assert !any(inrange.(calcs)) "Zu hohe Genauigkeit bei geringer Anzahl an Iterationen."
     @assert std(calcs) != 0.0 "Keine Änderung bei Erhöhung der Iterationen."
 end
+
+check_functions["11.3.6"] = function(result)
+    function generate_random_sentence(number_of_words)
+        sep = rand(['!',' ','_','*','-'])
+        chrs = [Char(i) for i in vcat(65:65+25,97:97+25)]
+        words = [join([rand(chrs) for i in 3:rand(4:10)])
+                 for _ in 1:number_of_words]
+        (sentence=join(words,sep),sep=sep,split=words)
+    end
+    for i in 1:10
+        t = generate_random_sentence(rand(3:5))
+        @assert result(t.sentence,t.sep) == t.split "Fehler bei Aufruf mit '$(t.sentence)' und '$(t.sep)'."
+    end
+    t = generate_random_sentence(1)
+    @assert result(t.sentence,t.sep) == t.split "Fehler bei Aufruf mit '$(t.sentence)' und '$(t.sep)'."
+    @assert result(t.sep*t.sentence*t.sep,t.sep) == t.split "Fehler bei Aufruf mit '$(t.sep*t.sentence*t.sep)' und '$(t.sep)'."
+    @assert result(t.sep*t.sentence*t.sep*t.sep*t.sentence,t.sep) == [t.sentence, t.sentence] "Fehler bei Aufruf mit '$(t.sep*t.sentence*t.sep)' und '$(t.sep)'."
+    @assert result(t.sentence,'+') == t.split "Fehler bei Aufruf mit '$(t.sentence)' und '+'."
+end
