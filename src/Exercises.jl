@@ -229,3 +229,21 @@ check_functions["11.3.4"] = function(result)
     check(x->cos(x^3),-2,1,1.78718,"cos(x^3)")
     check(x->(x^2/(1+sin(x))),-1,3,6.84768,"(x^2/(1+sin(x))")
 end
+
+using Statistics    
+
+check_functions["11.3.5.1"] = function(result)
+    inrange(x) = 0.0045 <= x <= 0.0046
+    @assert all(inrange.([floor(result(10000000),digits=4) for _ in 1:10])) "Fehler bei der Berechnung"
+    calcs = [floor(result(10^n),digits=4) for n in 0:3]
+    @assert !any(inrange.(calcs)) "Zu hohe Genauigkeit bei geringer Anzahl an Iterationen."
+    @assert std(calcs) != 0.0 "Keine Änderung bei Erhöhung der Iterationen."
+end
+
+check_functions["11.3.5.2"] = function(result)
+    inrange(x) = 0.420 <= x <= 0.423
+    @assert all(inrange.([floor(result(10000000),digits=4) for _ in 1:10])) "Fehler bei der Berechnung"
+    calcs = [floor(result(10^n),digits=4) for n in 0:3]
+    @assert !any(inrange.(calcs)) "Zu hohe Genauigkeit bei geringer Anzahl an Iterationen."
+    @assert std(calcs) != 0.0 "Keine Änderung bei Erhöhung der Iterationen."
+end
