@@ -286,3 +286,14 @@ check_functions["11.3.8"] = function(result)
 end
 set_score("11.3.8",1.0)
 
+using Dates
+ 
+# 14. Spezielle Datentypen
+# 14.3.1 Zeiträtsel
+check_functions["14.3.1"] = function(result)
+    @dos result() :Date :Day :Week
+    d = result()
+    @assert Day(d) == Day(12)
+    @assert Month(d) == Month(1)
+end
+set_score("14.3.1",1.0)
