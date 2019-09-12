@@ -121,11 +121,11 @@ check_functions["8.4.5"] = function(result)
 end
 set_score("8.4.5",1.0)
 
-# 8.4.7 Tuples zusammenfügen
-check_functions["8.4.7"] = function(result)
+# 8.4.6 Tuples zusammenfügen
+check_functions["8.4.6"] = function(result)
 	@assert result(('a','b'),('c','d','e')) == ('a','b','c','d','e')
 end
-set_score("8.4.7",1.0)
+set_score("8.4.6",1.0)
 
 # 10. Lineare Algebra
 
