@@ -121,14 +121,6 @@ check_functions["8.4.5"] = function(result)
 end
 set_score("8.4.5",1.0)
 
-# 8.4.6 Dictionaries zusammenfügen
-check_functions["8.4.6"] = function(result)
-	d1 = Dict("aa"=>4,"pp"=>1,"dd"=>3,"kk"=>19)
-	d2 = Dict("hh"=>5,"gg"=>31)
-	@assert result(d1,d2) == Dict("aa"=>4,"pp"=>1,"dd"=>3,"kk"=>19,"hh"=>5,"gg"=>31)
-end
-set_score("8.4.6",1.0)
-
 # 8.4.7 Tuples zusammenfügen
 check_functions["8.4.7"] = function(result)
 	@assert result(('a','b'),('c','d','e')) == ('a','b','c','d','e')
@@ -283,3 +275,12 @@ check_functions["11.3.7"] = function(bsqrt)
     end
 end
 set_score("11.3.7",1.0)
+
+# 11.3.8 Dictionaries zusammenfügen
+check_functions["11.3.8"] = function(result)
+	d1 = Dict("aa"=>4,"pp"=>1,"dd"=>3,"kk"=>19)
+	d2 = Dict("hh"=>5,"gg"=>31)
+	@assert result(d1,d2) == Dict("aa"=>4,"pp"=>1,"dd"=>3,"kk"=>19,"hh"=>5,"gg"=>31)
+end
+set_score("11.3.8",1.0)
+
