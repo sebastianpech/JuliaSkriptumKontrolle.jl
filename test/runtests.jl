@@ -129,9 +129,11 @@ end
 end
 
 # Define check function for test 001
+working_dir = ""
 JuliaSkriptumKontrolle.check_functions["test-003"] = function(result)
+    global working_dir
     result()
-    pwd()
+    working_dir = pwd()
 end
 JuliaSkriptumKontrolle.set_score("test-003",5.0)
 
@@ -142,7 +144,7 @@ JuliaSkriptumKontrolle.set_score("test-003",5.0)
     dirpath = joinpath(JuliaSkriptumKontrolle.exercise_data_dir,identifier)
     mkdir(dirpath)
 
-    working_dir = @Aufgabe "test-003" function sometest()
+    @Aufgabe "test-003" function sometest()
         touch(joinpath("test-003","file"))
     end
 
