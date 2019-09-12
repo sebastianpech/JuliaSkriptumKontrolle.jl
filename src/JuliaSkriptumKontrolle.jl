@@ -170,9 +170,12 @@ end
 
 Cassette.@context CounterCtx
 
-function isrelatedfunction(f,name)
-    fname = String(typeof(f).name.name)
-    if fname == "#$name"
+isrelated(t::Type,name) = isrelated(string(t.name.name),name)
+isrelated(t::UnionAll,name) = false
+isrelated(f::Function,name) = isrelated(string(typeof(f).name.name),name)
+
+function isrelated(fname::AbstractString,name)
+    if fname == "#$name" || fname == string(name)
         return true
     end
     if startswith(fname,"#kw##$name")
@@ -186,7 +189,7 @@ end
 
 function check_count_function(ctx::CounterCtx,f)
     for fname in keys(ctx.metadata)
-        if isrelatedfunction(f,fname)
+        if isrelated(f,fname)
             ctx.metadata[fname] += 1
         end
     end
