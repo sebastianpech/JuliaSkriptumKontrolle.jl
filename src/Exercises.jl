@@ -170,7 +170,7 @@ check_functions["10.3.4"] = function(result)
     function check(v1,v2)
         res = result(v1,v2)
         @assert isa(res,Number) "Die Funktion sollte einen Winkel zurück geben."
-        eq = res ≈ rad2deg(acos(v1⋅v2/(norm(v1)*norm(v2))))
+        eq = res ≈ acos(v1⋅v2/(norm(v1)*norm(v2)))
         @assert eq  "Winkel für Vektoren $v1 und $v2 falsch berechnet. Hinweis: Der Winkel muss in rad berechnet werden."
     end
     check([1,2,3],[4,5,6])
