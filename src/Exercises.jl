@@ -285,9 +285,21 @@ check_functions["11.3.8"] = function(result)
 end
 set_score("11.3.8",1.0)
 
-using Dates
- 
+# 13. Debugger
+# 13.3.1 ggt
+check_functions["13.3.1"] = function(ggt)
+    @donts ggt(8,9) :gcd
+    a = rand(1:1000,1000); b = rand(1:1000,1000);
+    @assert ggt.(a,b) == gcd.(a,b) "Fehler bei der Berechnung"
+    @assert ggt(10,0) == gcd(10,0)
+    @assert ggt(0,10) == gcd(0,10)
+    @assert ggt(-2304,288) == gcd(-2304,288)
+end
+set_score("13.3.1",1.0)
+
+
 # 14. Spezielle Datentypen
+using Dates
 # 14.3.1 Zeiträtsel
 check_functions["14.3.1"] = function(result)
     @dos result() :Date :Day :Week
