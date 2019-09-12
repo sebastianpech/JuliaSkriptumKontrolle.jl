@@ -308,3 +308,113 @@ check_functions["14.3.1"] = function(result)
     @assert Month(d) == Month(1)
 end
 set_score("14.3.1",1.0)
+
+# 15. FileIO
+# 15.3.1 Surfvival lager
+const stuff = ["Taschenmesser",
+             "Taschenlampe",
+             "Batterie",
+             "Wasserflasche",
+             "Schlafsack",
+             "Gummistiefel",
+             "Fernglas",
+             "Reis",
+             "Salz",
+             "Konserven",
+             "Dosenöffner",
+             "Kocher",
+             "Medikamente",
+             ]
+function pick_random()
+    no = rand(1:40)
+    return (thing=rand(stuff),change=no)
+end
+function make_lager()
+    initial = rand(4:length(stuff))
+    stuff_here = [
+        pick_random()
+        for i in 1:initial
+    ]
+end
+all_things_in_lager(lager) = Set([x.thing for x in lager])
+all_things_actually_in_lager(lager) = filter(all_things_in_lager(lager)) do t
+    total_of_thing(lager,t) > 0
+end
+total_of_thing(lager,thing) = sum([x.change for x in lager if x.thing == thing])
+function remove_something(lager)
+    things_avail = all_things_actually_in_lager(lager)
+    length(things_avail) == 0 && return nothing
+    thing = rand(things_avail)
+    amount = total_of_thing(lager,thing)
+    take_out = rand(1:amount)
+    push!(lager,(thing=thing,change=-take_out))
+end
+function add_something(lager)
+    push!(lager,pick_random())
+end
+function do_something(lager)
+    if rand(Bool)
+        return add_something(lager)
+    else
+        return remove_something(lager)
+    end
+end
+function rand_lager_history()
+    lager = make_lager()
+    for i in 1:rand(10:30)
+        do_something(lager)
+    end
+    return lager
+end
+function rand_lager_history_collect()
+    [rand_lager_history() for i in 1:rand(3:13)]
+end
+function save_lager(lager,name)
+    open("$name.csv","w") do f
+        write(f,"Artikel,Bestand\n")
+        for t in lager
+            write(f,"$(t.thing),$(t.change)\n")
+        end
+    end
+end
+function generate_survival_camp()
+    path = "15-3"
+    if isdir(path)
+        rm(path,recursive=true,force=true)
+    end
+    mkdir(path)
+    lagers = rand_lager_history_collect()
+    for (i,lager) in enumerate(lagers)
+        save_lager(lager,joinpath(path,"Lager$i"))
+    end
+    return lagers
+end
+
+setup_functions["15.3.1"] = function()
+    generate_survival_camp()
+    nothing
+end
+setup_functions["15.3.2"] = function()
+    generate_survival_camp()
+    nothing
+end
+setup_functions["15.3.3"] = function()
+    generate_survival_camp()
+    nothing
+end
+
+check_functions["15.3.1"] = function(read_lagers)
+    camp = generate_survival_camp()
+    bestand = read_lagers()
+    for (i,lager) in enumerate(camp)
+        for thing in all_things_in_lager(lager)
+            tot = total_of_thing(lager,thing)
+            try
+                @assert tot == bestand[i][thing] "Falsche Anzahl bei Lager $i für $thing. Erwarte $tot erhalten $(bestand[i][thing])"
+            catch e
+                @show pwd()
+                @show e
+            end
+        end
+    end
+end
