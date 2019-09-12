@@ -2,12 +2,13 @@ module JuliaSkriptumKontrolle
 
 using PrettyTables
 using Cassette
+using DataStructures
 
 export @Aufgabe
 
 const exercise_data_dir = joinpath(@__DIR__,"..","exercise_data")
 
-check_functions = Dict{String,Function}()
+check_functions = OrderedDict{String,Function}()
 exercise_score = Dict{String,Float64}()
 check_function_state = Dict{String,Symbol}()
 setup_functions = Dict{String,Function}()
@@ -142,7 +143,7 @@ function run_redirected(f::Function;input::Vector{<:AbstractString}=String[],out
 end
 
 function status()
-    exercises = sort(keys(check_functions)|>collect)
+    exercises = keys(check_functions)|>collect
     h1 = Highlighter(
         (data,i,j)-> (data[i,2] == "✓"),
         bold=false,foreground=:green)
