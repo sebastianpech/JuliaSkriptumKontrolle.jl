@@ -203,7 +203,7 @@ check_functions["11.3.1"] = function(result)
     numbers = [rand(1:2:101) for _ in 1:10]
     testit.(numbers,Ref("Ungerade"))
 end
-set_score("10.3.1",1.0)
+set_score("11.3.1",1.0)
 
 check_functions["11.3.2"] = function(result)
     inp = ["3","1.1","ggg","9",""]
@@ -215,11 +215,13 @@ check_functions["11.3.2"] = function(result)
         @assert out[i] == l "Erwarte: '$(expected[i])' erhalten: '$(out[i])'"
     end
 end
+set_score("11.3.2",1.0)
 
 check_functions["11.3.3"] = function(result)
     @assert count([floor(result(1000),digits=0) for _ in 1:100] .== 3.0) > 90 "Falsch berechnet"
     @assert count([floor(result(1_000_000),digits=1) for _ in 1:20] .== 3.1) > 15 "Falsch berechnet"
 end
+set_score("11.3.3",1.0)
 
 check_functions["11.3.4"] = function(result)
     function check(f,a,b,expected,fname)
@@ -229,6 +231,7 @@ check_functions["11.3.4"] = function(result)
     check(x->cos(x^3),-2,1,1.78718,"cos(x^3)")
     check(x->(x^2/(1+sin(x))),-1,3,6.84768,"(x^2/(1+sin(x))")
 end
+set_score("11.3.4",1.0)
 
 using Statistics    
 
@@ -239,6 +242,7 @@ check_functions["11.3.5.1"] = function(result)
     @assert !any(inrange.(calcs)) "Zu hohe Genauigkeit bei geringer Anzahl an Iterationen."
     @assert std(calcs) != 0.0 "Keine Änderung bei Erhöhung der Iterationen."
 end
+set_score("11.3.5.1",0.5)
 
 check_functions["11.3.5.2"] = function(result)
     inrange(x) = 0.420 <= x <= 0.423
@@ -247,6 +251,7 @@ check_functions["11.3.5.2"] = function(result)
     @assert !any(inrange.(calcs)) "Zu hohe Genauigkeit bei geringer Anzahl an Iterationen."
     @assert std(calcs) != 0.0 "Keine Änderung bei Erhöhung der Iterationen."
 end
+set_score("11.3.5.2",0.5)
 
 check_functions["11.3.6"] = function(result)
     function generate_random_sentence(number_of_words)
@@ -256,6 +261,8 @@ check_functions["11.3.6"] = function(result)
                  for _ in 1:number_of_words]
         (sentence=join(words,sep),sep=sep,split=words)
     end
+    t = generate_random_sentence(1)
+    @donts result(t.sentence,t.sep) :split
     for i in 1:10
         t = generate_random_sentence(rand(3:5))
         @assert result(t.sentence,t.sep) == t.split "Fehler bei Aufruf mit '$(t.sentence)' und '$(t.sep)'."
@@ -266,3 +273,13 @@ check_functions["11.3.6"] = function(result)
     @assert result(t.sep*t.sentence*t.sep*t.sep*t.sentence,t.sep) == [t.sentence, t.sentence] "Fehler bei Aufruf mit '$(t.sep*t.sentence*t.sep)' und '$(t.sep)'."
     @assert result(t.sentence,'+') == t.split "Fehler bei Aufruf mit '$(t.sentence)' und '+'."
 end
+set_score("11.3.6",1.0)
+
+check_functions["11.3.7"] = function(bsqrt)
+    @donts bsqrt(9) :sqrt
+    for _ in 1:100
+        n = rand(2.0:0.01:100000.)
+        @assert isapprox(bsqrt(n),sqrt(n),atol=1e-5) "Fehler bei der Berechnung von '$n'."
+    end
+end
+set_score("11.3.7",1.0)
