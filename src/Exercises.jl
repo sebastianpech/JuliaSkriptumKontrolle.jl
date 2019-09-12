@@ -240,7 +240,6 @@ check_functions["11.3.5.2"] = function(result)
     inrange(x) = 0.420 <= x <= 0.423
     @assert all(inrange.([floor(result(10000000),digits=4) for _ in 1:10])) "Fehler bei der Berechnung"
     calcs = [floor(result(10^n),digits=4) for n in 0:3]
-    @assert !any(inrange.(calcs)) "Zu hohe Genauigkeit bei geringer Anzahl an Iterationen."
     @assert std(calcs) != 0.0 "Keine Änderung bei Erhöhung der Iterationen."
 end
 set_score("11.3.5.2",0.5)
