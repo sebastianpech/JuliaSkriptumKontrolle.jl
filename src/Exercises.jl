@@ -73,7 +73,17 @@ set_score("7.4.4",1.0)
 
 # 7.4.5 Kreis: Eigenschaften printen
 check_functions["7.4.5"] = function(result)
-	
+	out = String[]
+	inp = [rand(0:30) for _ in 1:10]
+	res = run_redirected(output=out) do
+		result.(inp)
+	end
+    for (idx,i) in enumerate(1:3:length(out)-3)
+        r = inp[idx]
+        @assert out[i] == "r = $(round(r,digits=2))" "Fehler bei der Ausgabe."
+        @assert out[i+1] == "A = $(round(r^2*π,digits=2))" "Fehler bei der Ausgabe oder Berechnung von A."
+        @assert out[i+2] == "U = $(round(2*r*π,digits=2))" "Fehler bei der Ausgabe oder Berechnung von U."
+    end
 end
 set_score("7.4.5",1.0)
 
