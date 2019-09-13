@@ -38,8 +38,8 @@ set_score("3.5.1",1.0)
 check_functions["7.4.1"] = function(result)
 	out = String[]
 	inp = ["foo","zack"]
-	res = run_redirected(input=inp,output=out) do
-		result()
+	res = run_redirected(output=out) do
+		result.(inp)
 	end
 	@assert out != ["foofoofoo","zackzackzack"] "Abstand vergessen"
 	@assert out == ["foo foo foo","zack zack zack"]
