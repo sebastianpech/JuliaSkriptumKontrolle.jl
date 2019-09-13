@@ -310,7 +310,7 @@ end
 set_score("14.3.1",1.0)
 
 # 15. FileIO
-# 15.3.1 Surfvival lager
+# 15.3.1 Survival lager
 const stuff = ["Taschenmesser",
              "Taschenlampe",
              "Batterie",
@@ -324,6 +324,7 @@ const stuff = ["Taschenmesser",
              "Dosenöffner",
              "Kocher",
              "Medikamente",
+			 "Bier",
              ]
 function pick_random()
     no = rand(1:40)
