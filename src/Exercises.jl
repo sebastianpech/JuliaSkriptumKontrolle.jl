@@ -390,20 +390,33 @@ function generate_survival_camp()
     return lagers
 end
 
+using Random
+
+setup_functions["15.3"] = function()
+    Random.seed!(1234)
+    generate_survival_camp()
+    nothing
+end
 setup_functions["15.3.1"] = function()
+    Random.seed!(1234)
     generate_survival_camp()
     nothing
 end
 setup_functions["15.3.2"] = function()
+    Random.seed!(1234)
     generate_survival_camp()
     nothing
 end
 setup_functions["15.3.3"] = function()
+    Random.seed!(1234)
     generate_survival_camp()
     nothing
 end
 
 check_functions["15.3.1"] = function(read_lagers)
+    Random.seed!(RandomDevice())
+    generate_survival_camp()
+    @dos read_lagers() :joinpath
     for _ in 1:50
         camp = generate_survival_camp()
         bestand = read_lagers()
@@ -418,6 +431,7 @@ end
 set_score("15.3.1",1.0)
 
 check_functions["15.3.2"] = function(lager_mit)
+    Random.seed!(RandomDevice())
     function get_lager_ids_with(camp,artikel,anzahl)
         ids = []
         for (id,lager) in enumerate(camp)
@@ -431,6 +445,9 @@ check_functions["15.3.2"] = function(lager_mit)
         end
         return ids
     end
+    camp = generate_survival_camp()
+    things = reduce(∪,all_things_in_lager.(camp))
+    @dos lager_mit(first(things),10) :joinpath
     for _ in 1:50
         camp = generate_survival_camp()
         things = reduce(∪,all_things_in_lager.(camp))
@@ -446,6 +463,9 @@ end
 set_score("15.3.2",1.0)
 
 check_functions["15.3.3"] = function(gesamt_bestand)
+    Random.seed!(RandomDevice())
+    generate_survival_camp()
+    @dos gesamt_bestand() :joinpath
     for _ in 1:50
         camp = generate_survival_camp()
         total = Dict{String,Int}()
