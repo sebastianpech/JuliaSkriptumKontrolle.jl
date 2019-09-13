@@ -10,6 +10,8 @@
 # 
 #    set_score("excercise identifier",score)
 
+using Random
+
 # 3. Interaktion
 # 3.5.1 Installiere alle Pakete für die LVA
 check_functions["3.5.1"] = function(result)
@@ -118,8 +120,18 @@ set_score("8.4.3",1.0)
 
 # 8.4.4 Anagram-Test
 check_functions["8.4.4"] = function(result)
-	@assert result("spam","amps") == true
-	@assert result("spam","eggs") == false
+    chrs = [Char(i) for i in vcat(97:97+25)]
+    random_word() = join(shuffle(chrs)[4:rand(5:div(length(chrs),2))])
+    function random_different_word(word)
+        _chrs = setdiff(Set(chrs),Set(word))
+        join(shuffle(collect(_chrs))[4:rand(5:div(length(_chrs),2))])
+    end
+    for _ in 1:100
+        w = random_word()
+        wd = random_different_word(w)
+        @assert result(w,join(shuffle(collect(w)))) "Falsche Ausgabe. Wort ist ein Anagram."
+        @assert !result(w,wd) "Falsche Ausgabe. Worst ist kein Anagram."
+    end
 end
 set_score("8.4.4",1.0)
 
@@ -400,8 +412,6 @@ function generate_survival_camp()
     end
     return lagers
 end
-
-using Random
 
 setup_functions["15.3"] = function()
     Random.seed!(1234)
