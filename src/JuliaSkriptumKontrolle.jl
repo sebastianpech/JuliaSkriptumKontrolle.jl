@@ -157,11 +157,16 @@ function status()
         bold=true)
 
     scores = get_score.(exercises)
+    points = [exercise_score[i] for i in exercises]
+
+    format_score(x,y) = "$x / $y"
+    
+    scores_out = [format_score(t...) for t in zip(scores,points)]
     table = hcat(exercises,
                  get_state_string.(exercises),
-                 scores)
+                 scores_out)
     table = vcat(table,
-                 ["" "∑" sum(scores)])
+                 ["" "∑" format_score(sum(scores),sum(points))])
 
     pretty_table(
         table,["Aufgabe","Status","Punkte"],
