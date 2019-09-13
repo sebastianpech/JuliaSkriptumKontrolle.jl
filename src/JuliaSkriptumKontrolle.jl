@@ -163,7 +163,7 @@ function status()
     
     table = hcat(exercises,
                  get_state_string.(exercises),
-                 scores)
+                 points)
     table = vcat(table,
                  ["" "∑" format_score(sum(scores),sum(points))])
 
