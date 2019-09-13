@@ -96,7 +96,7 @@ check_functions["8.4.1"] = function(result)
 	s1 = ["aa","bb"]
 	c1 = ['a', 'b']
 	@assert result(n1,n2,n3) == [1,2,3,4,5,6]
-	@assert result(n1,s1,c1) == [1,2,"aa","bb",'a','b']
+	# @assert result(n1,s1,c1) == [1,2,"aa","bb",'a','b']
 end
 set_score("8.4.1",1.0)
 
