@@ -229,13 +229,13 @@ check_functions["11.3.2"] = function(result)
         @assert out[i] == l "Erwarte: '$(expected[i])' erhalten: '$(out[i])'"
     end
 end
-set_score("11.3.2",1.0)
+set_score("11.3.2",2.0)
 
 check_functions["11.3.3"] = function(result)
     @assert count([floor(result(1000),digits=0) for _ in 1:100] .== 3.0) > 90 "Falsch berechnet"
     @assert count([floor(result(1_000_000),digits=1) for _ in 1:20] .== 3.1) > 15 "Falsch berechnet"
 end
-set_score("11.3.3",1.0)
+set_score("11.3.3",3.1)
 
 check_functions["11.3.4"] = function(result)
     function check(f,a,b,expected,fname)
@@ -245,7 +245,7 @@ check_functions["11.3.4"] = function(result)
     check(x->cos(x^3),-2,1,1.78718,"cos(x^3)")
     check(x->(x^2/(1+sin(x))),-1,3,6.84768,"(x^2/(1+sin(x))")
 end
-set_score("11.3.4",1.0)
+set_score("11.3.4",3.0)
 
 using Statistics    
 
@@ -256,7 +256,7 @@ check_functions["11.3.5.1"] = function(result)
     @assert !any(inrange.(calcs)) "Zu hohe Genauigkeit bei geringer Anzahl an Iterationen."
     @assert std(calcs) != 0.0 "Keine Änderung bei Erhöhung der Iterationen."
 end
-set_score("11.3.5.1",0.5)
+set_score("11.3.5.1",1.5)
 
 check_functions["11.3.5.2"] = function(result)
     inrange(x) = 0.420 <= x <= 0.423
@@ -264,7 +264,7 @@ check_functions["11.3.5.2"] = function(result)
     calcs = [floor(result(10^n),digits=4) for n in 0:3]
     @assert std(calcs) != 0.0 "Keine Änderung bei Erhöhung der Iterationen."
 end
-set_score("11.3.5.2",0.5)
+set_score("11.3.5.2",1.5)
 
 check_functions["11.3.6"] = function(result)
     function generate_random_sentence(number_of_words)
@@ -286,7 +286,7 @@ check_functions["11.3.6"] = function(result)
     @assert result(t.sep*t.sentence*t.sep*t.sep*t.sentence,t.sep) == [t.sentence, t.sentence] "Fehler bei Aufruf mit '$(t.sep*t.sentence*t.sep)' und '$(t.sep)'."
     @assert result(t.sentence,'+') == t.split "Fehler bei Aufruf mit '$(t.sentence)' und '+'."
 end
-set_score("11.3.6",1.0)
+set_score("11.3.6",3.0)
 
 check_functions["11.3.7"] = function(bsqrt)
     @donts bsqrt(9) :sqrt
@@ -295,7 +295,7 @@ check_functions["11.3.7"] = function(bsqrt)
         @assert isapprox(bsqrt(n),sqrt(n),atol=1e-5) "Fehler bei der Berechnung von '$n'."
     end
 end
-set_score("11.3.7",1.0)
+set_score("11.3.7",2.0)
 
 # 11.3.8 Dictionaries zusammenfügen
 check_functions["11.3.8"] = function(result)
@@ -329,7 +329,7 @@ check_functions["14.3.1"] = function(result)
     @assert Day(d) == Day(12)
     @assert Month(d) == Month(1)
 end
-set_score("14.3.1",1.0)
+set_score("14.3.1",2.0)
 
 # 15. FileIO
 # 15.3.1 Survival lager
@@ -449,7 +449,7 @@ check_functions["15.3.1"] = function(read_lagers)
         end
     end
 end
-set_score("15.3.1",1.0)
+set_score("15.3.1",3.0)
 
 check_functions["15.3.2"] = function(lager_mit)
     Random.seed!(RandomDevice())
@@ -481,7 +481,7 @@ check_functions["15.3.2"] = function(lager_mit)
         end
     end
 end
-set_score("15.3.2",1.0)
+set_score("15.3.2",3.0)
 
 check_functions["15.3.3"] = function(gesamt_bestand)
     Random.seed!(RandomDevice())
@@ -501,4 +501,4 @@ check_functions["15.3.3"] = function(gesamt_bestand)
         @assert beB == total "Falscher Bestand erhoben. Erwarte $total, erhalten $beB"
     end
 end
-set_score("15.3.3",1.0)
+set_score("15.3.3",3.0)
