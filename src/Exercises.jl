@@ -404,17 +404,60 @@ setup_functions["15.3.3"] = function()
 end
 
 check_functions["15.3.1"] = function(read_lagers)
-    camp = generate_survival_camp()
-    bestand = read_lagers()
-    for (i,lager) in enumerate(camp)
-        for thing in all_things_in_lager(lager)
-            tot = total_of_thing(lager,thing)
-            try
-                @assert tot == bestand[i][thing] "Falsche Anzahl bei Lager $i für $thing. Erwarte $tot erhalten $(bestand[i][thing])"
-            catch e
-                @show pwd()
-                @show e
+    for _ in 1:50
+        camp = generate_survival_camp()
+        bestand = read_lagers()
+        for (i,lager) in enumerate(camp)
+            for thing in all_things_in_lager(lager)
+                tot = total_of_thing(lager,thing)
+                @assert tot == bestand[i][thing] "Falsche Anzahl bei Lager $i für $thing. Erwarte $tot, erhalten $(bestand[i][thing])."
             end
         end
     end
 end
+set_score("15.3.1",1.0)
+
+check_functions["15.3.2"] = function(lager_mit)
+    function get_lager_ids_with(camp,artikel,anzahl)
+        ids = []
+        for (id,lager) in enumerate(camp)
+            for thing in all_things_in_lager(lager)
+                tot = total_of_thing(lager,thing)
+                if thing == artikel
+                    tot >= anzahl && push!(ids,id)
+                    break
+                end
+            end
+        end
+        return ids
+    end
+    for _ in 1:50
+        camp = generate_survival_camp()
+        things = reduce(∪,all_things_in_lager.(camp))
+        for i in 1:100
+            t = rand(things)
+            c = rand(0:100)
+            idsA = sort(get_lager_ids_with(camp,t,c))
+            idsB = sort(lager_mit(t,c))
+            @assert idsA == idsB "Falsche Ids. Erwarte $idsA, erhalten $idsB."
+        end
+    end
+end
+set_score("15.3.2",1.0)
+
+check_functions["15.3.3"] = function(gesamt_bestand)
+    for _ in 1:50
+        camp = generate_survival_camp()
+        total = Dict{String,Int}()
+        for (i,lager) in enumerate(camp)
+            for thing in all_things_in_lager(lager)
+                tot = total_of_thing(lager,thing)
+                thing in keys(total) || (total[thing] = 0)
+                total[thing] += tot
+            end
+        end
+        beB = gesamt_bestand()
+        @assert beB == total "Falscher Bestand erhoben. Erwarte $total, erhalten $beB"
+    end
+end
+set_score("15.3.3",1.0)
