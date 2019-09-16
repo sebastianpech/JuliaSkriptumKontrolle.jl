@@ -323,13 +323,13 @@ set_score("13.3.1",1.0)
 # 14. Spezielle Datentypen
 using Dates
 # 14.3.1 Zeiträtsel
-check_functions["14.3.1"] = function(result)
+check_functions["13.3.1"] = function(result)
     @dos result() :Date :Day :Week
     d = result()
     @assert Day(d) == Day(12)
     @assert Month(d) == Month(1)
 end
-set_score("14.3.1",2.0)
+set_score("13.3.1",2.0)
 
 # 15. FileIO
 # 15.3.1 Survival lager
@@ -401,7 +401,7 @@ function save_lager(lager,name)
     end
 end
 function generate_survival_camp()
-    path = "15-3"
+    path = "14-3"
     if isdir(path)
         rm(path,recursive=true,force=true)
     end
@@ -413,28 +413,28 @@ function generate_survival_camp()
     return lagers
 end
 
-setup_functions["15.3"] = function()
+setup_functions["14.3"] = function()
     Random.seed!(1234)
     generate_survival_camp()
     nothing
 end
-setup_functions["15.3.1"] = function()
+setup_functions["14.3.1"] = function()
     Random.seed!(1234)
     generate_survival_camp()
     nothing
 end
-setup_functions["15.3.2"] = function()
+setup_functions["14.3.2"] = function()
     Random.seed!(1234)
     generate_survival_camp()
     nothing
 end
-setup_functions["15.3.3"] = function()
+setup_functions["14.3.3"] = function()
     Random.seed!(1234)
     generate_survival_camp()
     nothing
 end
 
-check_functions["15.3.1"] = function(read_lagers)
+check_functions["14.3.1"] = function(read_lagers)
     Random.seed!(RandomDevice())
     generate_survival_camp()
     @dos read_lagers() :joinpath
@@ -449,9 +449,9 @@ check_functions["15.3.1"] = function(read_lagers)
         end
     end
 end
-set_score("15.3.1",3.0)
+set_score("14.3.1",3.0)
 
-check_functions["15.3.2"] = function(lager_mit)
+check_functions["14.3.2"] = function(lager_mit)
     Random.seed!(RandomDevice())
     function get_lager_ids_with(camp,artikel,anzahl)
         ids = []
@@ -481,9 +481,9 @@ check_functions["15.3.2"] = function(lager_mit)
         end
     end
 end
-set_score("15.3.2",3.0)
+set_score("14.3.2",3.0)
 
-check_functions["15.3.3"] = function(gesamt_bestand)
+check_functions["14.3.3"] = function(gesamt_bestand)
     Random.seed!(RandomDevice())
     generate_survival_camp()
     @dos gesamt_bestand() :joinpath
@@ -501,4 +501,4 @@ check_functions["15.3.3"] = function(gesamt_bestand)
         @assert beB == total "Falscher Bestand erhoben. Erwarte $total, erhalten $beB"
     end
 end
-set_score("15.3.3",3.0)
+set_score("14.3.3",3.0)
