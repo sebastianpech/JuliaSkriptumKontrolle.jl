@@ -92,17 +92,17 @@ set_score("7.4.5",1.0)
 
 # 8. Arrays, Dicts, Tuples
 # 8.4.1 Drei Arrays zusammenhängen
-check_functions["8.4.1"] = function(result)
+check_functions["8.5.1"] = function(result)
 	n1 = [1,2]; n2 = [3,4]; n3 = [5,6]
 	s1 = ["aa","bb"]
 	c1 = ['a', 'b']
 	@assert result(n1,n2,n3) == [1,2,3,4,5,6]
 	# @assert result(n1,s1,c1) == [1,2,"aa","bb",'a','b']
 end
-set_score("8.4.1",1.0)
+set_score("8.5.1",1.0)
 
 # 8.4.2 Inneres eines Arrays
-check_functions["8.4.2"] = function(result)
+check_functions["8.5.2"] = function(result)
 	a = [9,8,7,6,5]
 	b = [8,7,6]
 	c = [7]
@@ -110,17 +110,17 @@ check_functions["8.4.2"] = function(result)
 	@assert result(b) == c
 	@assert result(c) == []
 end
-set_score("8.4.2",1.0)
+set_score("8.5.2",1.0)
 
 # 8.4.3 Ist das Array sortiert?
-check_functions["8.4.3"] = function(result)
+check_functions["8.5.3"] = function(result)
 	@assert result(['s','p','a','m']) == false
 	@assert result(['a','m','p','s']) == true
 end
-set_score("8.4.3",1.0)
+set_score("8.5.3",1.0)
 
 # 8.4.4 Anagram-Test
-check_functions["8.4.4"] = function(result)
+check_functions["8.5.4"] = function(result)
     chrs = [Char(i) for i in vcat(97:97+25)]
     random_word() = join(shuffle(chrs)[4:rand(5:div(length(chrs),2))])
     function random_different_word(word)
@@ -134,21 +134,21 @@ check_functions["8.4.4"] = function(result)
         @assert !result(w,wd) "Falsche Ausgabe. Worst ist kein Anagram."
     end
 end
-set_score("8.4.4",1.0)
+set_score("8.5.4",1.0)
 
 # 8.4.5 N-tes Element eines Dictionaries ausgeben
-check_functions["8.4.5"] = function(result)
+check_functions["8.5.5"] = function(result)
 	d = Dict("aa"=>4,"pp"=>1,"dd"=>3,"kk"=>19)
 	@assert result(d,1) == 4
 	@assert result(d,3) == 19
 end
-set_score("8.4.5",1.0)
+set_score("8.5.5",1.0)
 
 # 8.4.6 Tuples zusammenfügen
-check_functions["8.4.6"] = function(result)
+check_functions["8.5.6"] = function(result)
 	@assert result(('a','b'),('c','d','e')) == ('a','b','c','d','e')
 end
-set_score("8.4.6",1.0)
+set_score("8.5.6",1.0)
 
 # 10. Lineare Algebra
 
@@ -308,9 +308,9 @@ check_functions["11.3.8"] = function(result)
 end
 set_score("11.3.8",1.0)
 
-# 13. Debugger
-# 13.3.1 ggt
-check_functions["13.3.1"] = function(ggt)
+# 12. Debugger
+# 12.3.1 ggt
+check_functions["12.3.1"] = function(ggt)
     @donts ggt(8,9) :gcd
     a = rand(1:1000,1000); b = rand(1:1000,1000);
     @assert ggt.(a,b) == gcd.(a,b) "Fehler bei der Berechnung"
@@ -318,12 +318,12 @@ check_functions["13.3.1"] = function(ggt)
     @assert ggt(0,10) == gcd(0,10)
     @assert ggt(-2304,288) == gcd(-2304,288)
 end
-set_score("13.3.1",1.0)
+set_score("12.3.1",1.0)
 
 
-# 14. Spezielle Datentypen
+# 13. Spezielle Datentypen
 using Dates
-# 14.3.1 Zeiträtsel
+# 13.3.1 Zeiträtsel
 check_functions["13.3.1"] = function(result)
     @dos result() :Date :Day :Week
     d = result()
@@ -332,8 +332,8 @@ check_functions["13.3.1"] = function(result)
 end
 set_score("13.3.1",2.0)
 
-# 15. FileIO
-# 15.3.1 Survival lager
+# 14. FileIO
+# 14.3.1 Survival lager
 const stuff = ["Taschenmesser",
              "Taschenlampe",
              "Batterie",
