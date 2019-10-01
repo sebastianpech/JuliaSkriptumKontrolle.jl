@@ -80,6 +80,7 @@ check_functions["7.4.5"] = function(result)
 	res = run_redirected(output=out) do
 		result.(inp)
 	end
+    @assert length(out) > 0 "Ausgabe fehlt"
     for (idx,i) in enumerate(1:3:length(out)-3)
         r = inp[idx]
         @assert out[i] == "r = $(round(r,digits=2))" "Fehler bei der Ausgabe."
