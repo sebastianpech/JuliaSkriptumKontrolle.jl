@@ -284,7 +284,7 @@ check_functions["11.3.6"] = function(result)
     t = generate_random_sentence(1)
     @assert result(t.sentence,t.sep) == t.split "Fehler bei Aufruf mit '$(t.sentence)' und '$(t.sep)'."
     @assert result(t.sep*t.sentence*t.sep,t.sep) == t.split "Fehler bei Aufruf mit '$(t.sep*t.sentence*t.sep)' und '$(t.sep)'."
-    @assert result(t.sep*t.sentence*t.sep*t.sep*t.sentence,t.sep) == [t.sentence, t.sentence] "Fehler bei Aufruf mit '$(t.sep*t.sentence*t.sep)' und '$(t.sep)'."
+    @assert result(t.sep*t.sentence*t.sep*t.sep*t.sentence,t.sep) == [t.sentence, t.sentence] "Fehler bei Aufruf mit '$(t.sep*t.sentence*t.sep*t.sep*t.sentence)' und '$(t.sep)'."
     @assert result(t.sentence,'+') == t.split "Fehler bei Aufruf mit '$(t.sentence)' und '+'."
 end
 set_score("11.3.6",3.0)
