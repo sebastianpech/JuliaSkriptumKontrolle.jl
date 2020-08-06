@@ -45,10 +45,6 @@ exercise_score["1.2"] = 2.0
 check_functions["1.2"] = function(result)
     out = String[]
     inp = ["foo", "bar", "baz", "exit"]
-    # An output und input können String Arrays übergeben werden.
-    # Alle Werte in input werden an stdin geschickt und output
-    # beinhaltet nach der Ausführung die an stdout gesendeten
-    # Texte.
     count = run_redirected(input=inp,output=out) do
         result()
     end
@@ -77,7 +73,7 @@ check_functions["1.3"] = function(result)
 end
 ```
 
-## Checking exersices (Student view)
+## Checking exercises (Student view)
 
 A block or function can be checked by using the macro `@Aufgabe` on this function or block.
 The progress can be viewed with `JuliaSkriptumKontrolle.status()`.
@@ -182,3 +178,8 @@ end
 ├─────────┼────────┼───────────┤
 │         │      ∑ │ 6.0 / 6.0 │
 ```
+
+## Batch checking
+
+`JuliaSkriptumKontrolle.suppress_errors()` can be called at the beginning of a file, to suppress error throwing.
+This way it's easier to check multiple files an return the exercise status for all of them, even if some of the exercises are wrong.
