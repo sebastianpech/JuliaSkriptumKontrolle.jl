@@ -21,13 +21,13 @@ If the `setup` function finds such a folder, the content is copied to the curren
 Assessment functions need to be added to `Dict` `JuliaSkriptumKontrolle.check_functions`. 
 The only attribute those function get passed is the result of the expression the students wrote.
 So this can be a simple block, or another function.
-Additionally, the score for the exercise must be added to `JuliaSkriptumKontrolle.exercise_score`.
+Additionally, the score for the exercise must be defined using `set_score`.
 
 The assessment function must throw an error in order to keep track of done, open and wrong exercises.
 Here, a function must be written that returns `x^2` if `x>0` and `0` otherwise.
 
 ```julia
-exercise_score["1.1"] = 1.0
+set_score("1.1", 1.0)
 check_functions["1.1"] = function(result)
     @assert result(2) === 4
     @assert result(-2.) === 0.0
@@ -41,7 +41,7 @@ Here, a function must be written that prints every text sent to `stdin` twice un
 The function must then return the number of read values.
 
 ```julia
-exercise_score["1.2"] = 2.0
+set_score("1.2", 2.0)
 check_functions["1.2"] = function(result)
     out = String[]
     inp = ["foo", "bar", "baz", "exit"]
@@ -62,7 +62,7 @@ The macro throws an `AssertionError` if a wrong function is used.
 In the following example a function should be written that sums the absolute values of all numbers provided, without using `sum` and `abs` but using `sign`.
 
 ```julia
-exercise_score["1.3"] = 3.0
+set_score("1.3", 3.0)
 check_functions["1.3"] = function(result)
     t = [-1,-2,3,4,5]
     t2 = [3,4,5]
