@@ -8,6 +8,19 @@ export @Aufgabe
 
 const exercise_data_dir = joinpath(@__DIR__,"..","exercise_data")
 
+# Variable is used for batch checking of files
+global RETHROW_ERRORS = true
+
+function rethrow_errors()
+    global RETHROW_ERRORS
+    RETHROW_ERRORS=true
+end
+
+function suppress_errors() 
+    global RETHROW_ERRORS
+    RETHROW_ERRORS=false
+end
+
 check_functions = OrderedDict{String,Function}()
 exercise_score = Dict{String,Float64}()
 check_function_state = Dict{String,Symbol}()
@@ -51,7 +64,11 @@ macro Aufgabe(identifier::AbstractString, expr)
         catch e
             cd($cwd)
             JuliaSkriptumKontrolle.failed($identifier)
-            rethrow(e)
+            if JuliaSkriptumKontrolle.RETHROW_ERRORS
+                rethrow(e)
+            else
+                println(e)
+            end
         end
         nothing
     end

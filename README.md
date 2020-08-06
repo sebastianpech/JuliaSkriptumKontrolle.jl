@@ -4,41 +4,44 @@
 
 ## Sandbox
 
-Jeder Kontrolle wird in einer eigene Sandbox in einem temporären Verzeichnis ausgeführt.
+Every assessment of an exercise runs in its own sandbox in a temporary directory.
 
 ## Setup
 
-Mit dem `Dict` `setup_functions` kann eine Funktion definiert werden die vor dem Aufruf der Kontrollfunktion aufgerufen wird.
-Die Funktion `setup(identifier)` soll auch vom User verwendet werden, falls extra Daten oder sonstige Aktion vor dem Start der Aufgabe notwendig sind.
+Functions defined in the `Dict` `setup_functions` run before every call to the assessment function.
+The function `setup(identifier)` should also be used by students if additional actions are needed before starting with the exercise.
 
-Speziell zum kopieren von Daten gibt es den Ordern `exercise_data`. Findet die Funktion `setup` dort eine Order der wie der Aufgaben `identifer` lautet, wird der gesamte Order ins aktuelle Verzeichnis kopiert.
+A special setup case is providing data for an exercise. This can be done by putting a folder named like the exercise `identifer` into `exercise_data`.
+If the `setup` function finds such a folder, the content is copied to the current directory.
 
-## Kontrollfunktionen
-Die Kontrollfunktionen sollten im Paket definiert werden, damit der
-User nur die eigenen Funktionen sieht und nicht durch die Funktionen
-gestört wird.
+## Defining exercises
 
-### Kontrolle für Aufgabe 1.1
+### Exercise 1.1
 
-Die Kontrollfunktion muss zum `Dict` `JuliaSkriptumKontrolle.check_functions` hinzugefügt werden.
-Jeder Kontrollfunktion wird ein Parameter übergeben der das Ergebnis der zu Bewertenden `Expr` beinhaltet.
-Die folgende Funktion überprüft eine Funktion die eine Zahl > 0 quadrieren und für alle anderen Fälle 0 zurück geben soll.
+Assessment functions need to be added to `Dict` `JuliaSkriptumKontrolle.check_functions`. 
+The only attribute those function get passed is the result of the expression the students wrote.
+So this can be a simple block, or another function.
+Additionally, the score for the exercise must be added to `JuliaSkriptumKontrolle.exercise_score`.
 
-Die Checkfunktion muss einen Fehler verursachen, damit ein korrekter globaler Eintrag gemacht wird ob die Aufgabe korrekt erfüllt wurde.
+The assessment function must throw an error in order to keep track of done, open and wrong exercises.
+Here, a function must be written that returns `x^2` if `x>0` and `0` otherwise.
 
 ```julia
+exercise_score["1.1"] = 1.0
 check_functions["1.1"] = function(result)
     @assert result(2) === 4
     @assert result(-2.) === 0.0
 end
 ```
 
-### Kontrolle für Aufgabe 1.2
+### Exercise 1.2 -- `stdin` and `stdout`
 
-Die Funktion kontrolliert eine Funktion die einen Text von `stdin` einliest und doppelt nach `stdout` ausgibt.
-Wird `exit` eingelesen bricht die Funktion ab und gibt die Anzahl an Schleifenzyklen zurück.
+A utility function `run_redirected` is provided that allows capturing output and providing input.
+Here, a function must be written that prints every text sent to `stdin` twice until `"exit"` is read.
+The function must then return the number of read values.
 
 ```julia
+exercise_score["1.2"] = 2.0
 check_functions["1.2"] = function(result)
     out = String[]
     inp = ["foo", "bar", "baz", "exit"]
@@ -46,43 +49,68 @@ check_functions["1.2"] = function(result)
     # Alle Werte in input werden an stdin geschickt und output
     # beinhaltet nach der Ausführung die an stdout gesendeten
     # Texte.
-    res = run_redirected(input=inp,output=out) do
+    count = run_redirected(input=inp,output=out) do
         result()
     end
     @assert out == ["foofoo", "barbar", "bazbaz"] 
-    @assert count == 4
+    @assert count == 3
 end
 ```
 
-### Kontrolle für Aufgaben die bestimmte Funktion verwenden oder nicht verwenden müssen
+### Exercise 1.3 -- Restrict or require usage of certain functions 
 
-Für Beispiele wo eine bereits vorhanden Funktion programmiert werden soll, kann die Lösung sehr einfach 
-durch Aufruf dieser Funktion erfolgen. Um das zu verhindern stehen die Macros `@dos` und `@donts` zur Verfügung.
-
-Im folgenden Beispiel darf in die Funktion nicht `abs` oder `sqrt` verwenden, muss aber `sign` verwenden.
-Wird eine der angegeben Funktionen aufgerufen, wird ein `AssertionError` ausgegeben und die Aufgabe wird als nicht gelöst markiert.
+Often exercises require students to rewrite already existing functions.
+By just checking the result, those exercises would be very simple, because the already implemented version could be used.
+For such cases the macros `@dos` and `@donts` are provided.
+The macro throws an `AssertionError` if a wrong function is used.
+In the following example a function should be written that sums the absolute values of all numbers provided, without using `sum` and `abs` but using `sign`.
 
 ```julia
+exercise_score["1.3"] = 3.0
 check_functions["1.3"] = function(result)
-    @donts result(2) :abs :sqrt
-    @dos result(2) :sign
-    @assert result(2) === 4
-    @assert result(-2.) === 0.0
+    t = [-1,-2,3,4,5]
+    t2 = [3,4,5]
+    @donts result(t) :sum :abs
+    @dos result(t) :sign
+    @assert result(t) === sum(abs.(t))
+    @assert result(t2) === sum(abs.(t2))
 end
 ```
 
-## Kontrolle für den Benutzer
+## Checking exersices (Student view)
 
-Zur Kontrolle kann das Macro `@Aufgabe "Identifikation" Expr` verwendet werden.
+A block or function can be checked by using the macro `@Aufgabe` on this function or block.
+The progress can be viewed with `JuliaSkriptumKontrolle.status()`.
+Before any of the examples is tried `JuliaSkriptumKontrolle.status()` prints:
 
-### Aufgabe 1.1
+```
+│ Aufgabe │ Status │    Punkte │
+├─────────┼────────┼───────────┤
+│     1.1 │      ? │       1.0 │
+│     1.2 │      ? │       2.0 │
+│     1.3 │      ? │       3.0 │
+├─────────┼────────┼───────────┤
+│         │      ∑ │ 0.0 / 6.0 │
+```
+
+### Exercise 1.1
 
 ```julia
 @Aufgabe "1.1" function square_if_positive(x)
     return x^2
 end
-# --> Falsch!
+# --> ERROR: AssertionError: result(-2.0) === 0.0
+```
 
+```
+│ Aufgabe │ Status │    Punkte │
+│     1.1 │      × │       1.0 │
+│     1.2 │      ? │       2.0 │
+│     1.3 │      ? │       3.0 │
+├─────────┼────────┼───────────┤
+│         │      ∑ │ 0.0 / 6.0 │
+```
+```julia
 @Aufgabe "1.1" function square_if_positive(x)
     if x < 0
         return zero(x)
@@ -90,7 +118,15 @@ end
         return x^2
     end
 end
-# --> Richtig!
+```
+
+```
+│ Aufgabe │ Status │    Punkte │
+│     1.1 │      ✓ │       1.0 │
+│     1.2 │      ? │       2.0 │
+│     1.3 │      ? │       3.0 │
+├─────────┼────────┼───────────┤
+│         │      ∑ │ 1.0 / 6.0 │
 ```
 
 ### Aufgabe 1.2
@@ -106,7 +142,43 @@ end
         end
         println(inp^2)
     end
-    return counter
+    return counter-1
 end
+```
 
+```
+│ Aufgabe │ Status │    Punkte │
+│     1.1 │      ✓ │       1.0 │
+│     1.2 │      ✓ │       2.0 │
+│     1.3 │      ? │       3.0 │
+├─────────┼────────┼───────────┤
+│         │      ∑ │ 3.0 / 6.0 │
+```
+
+### Aufgabe 1.3
+
+```julia
+@Aufgabe "1.3" function my_sum(x)
+    return sum(abs.(x)) 
+end # --> ERROR: AssertionError: Verwendung von 'sum' und 'abs' nicht erlaubt!
+    #                            Usage of 'sum' and 'abs' is not allowed!
+```
+
+```julia
+@Aufgabe "1.3" function my_sum(x)
+    s = zero(eltype(x))
+    for _x in x
+        s += sign(_x)*_x
+    end
+    return s
+end
+```
+
+```
+│ Aufgabe │ Status │    Punkte │
+│     1.1 │      ✓ │       1.0 │
+│     1.2 │      ✓ │       2.0 │
+│     1.3 │      ✓ │       3.0 │
+├─────────┼────────┼───────────┤
+│         │      ∑ │ 6.0 / 6.0 │
 ```
