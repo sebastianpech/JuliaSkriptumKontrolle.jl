@@ -187,7 +187,7 @@ function status()
     pretty_table(
         table,["Aufgabe","Status","Punkte"],
         highlighters = (h1,h2,h3),
-        hlines = [size(table,1)-1,],screen_size = (-1,-1), crop = :none)
+        hlines = [0,1,size(table,1),size(table,1)+1],screen_size = (-1,-1), crop = :none)
 end
 
 Cassette.@context CounterCtx
