@@ -417,7 +417,8 @@ check_functions["14.3.1"] = function(read_lagers)
         for (i,lager) in enumerate(camp)
             for thing in all_things_in_lager(lager)
                 tot = total_of_thing(lager,thing)
-                @assert tot == bestand[i][thing] "Falsche Anzahl bei Lager $i für $thing. Erwarte $tot, erhalten $(bestand[i][thing])."
+                @assert thing in keys(bestand[i]) "Erwarte $tot Einheiten von $thing in Lager $i, kein Eintrag gefunden.\nBeispiel Dateien unter '$(pwd())'"
+                @assert tot == bestand[i][thing] "Falsche Anzahl bei Lager $i für $thing. Erwarte $tot, erhalten $(bestand[i][thing]).\nBeispiel Dateien unter: '$(pwd())'"
             end
         end
     end
