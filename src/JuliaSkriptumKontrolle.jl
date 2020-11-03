@@ -193,6 +193,7 @@ end
 Cassette.@context CounterCtx
 
 isrelated(t::Type,name) = isrelated(string(t.name.name),name)
+isrelated(t::DataType,name) = isrelated(string(t.name.name),name)
 isrelated(t::UnionAll,name) = false
 isrelated(f::Function,name) = isrelated(string(typeof(f).name.name),name)
 
