@@ -196,6 +196,12 @@ isrelated(t::Type,name) = isrelated(string(t.name.name),name)
 isrelated(t::DataType,name) = isrelated(string(t.name.name),name)
 isrelated(t::UnionAll,name) = false
 isrelated(f::Function,name) = isrelated(string(typeof(f).name.name),name)
+function isrelated(f::T,name) where T
+    if typeof(T) <: DataType
+        return isrelated(string(T.name.name),name)
+    end
+    return false
+end
 
 function isrelated(fname::AbstractString,name)
     if fname == "#$name" || fname == string(name)
