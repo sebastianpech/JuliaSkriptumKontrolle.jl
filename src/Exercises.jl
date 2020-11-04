@@ -363,7 +363,7 @@ function rand_lager_history()
     return lager
 end
 function rand_lager_history_collect()
-    [rand_lager_history() for i in 1:rand(3:13)]
+    [rand_lager_history() for i in 1:rand(10:20)]
 end
 function save_lager(lager,name)
     open("$name.csv","w") do f
