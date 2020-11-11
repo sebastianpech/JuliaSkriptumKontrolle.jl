@@ -3,6 +3,9 @@ module JuliaSkriptumKontrolle
 using PrettyTables
 using Cassette
 using DataStructures
+using Crayons.Box
+
+include(joinpath(@__DIR__, "Crypto.jl"))
 
 export @Aufgabe
 
@@ -25,6 +28,7 @@ check_functions = OrderedDict{String,Function}()
 exercise_score = Dict{String,Float64}()
 check_function_state = Dict{String,Symbol}()
 setup_functions = Dict{String,Function}()
+solution_data = Dict{String, Vector{Int}}()
 
 function set_score(identifier::AbstractString,score)
     @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
@@ -36,6 +40,38 @@ function get_score(identifier::AbstractString)
     @assert identifier in keys(exercise_score) "Aufgabe $identifier hat keine eingetragenen Punkte!"
     get_state(identifier) == :passed && return exercise_score[identifier]
     return 0.0
+end
+
+function set_solution(identifier::AbstractString,solution)
+    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+    solution_data[identifier] = solution
+end
+
+function get_solution(identifier::AbstractString)
+    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+    return get(solution_data,identifier,nothing)
+end
+
+function decode_solution(identifier::AbstractString)
+    sol = get_solution(identifier)
+    sol == nothing && return nothing
+    return decode(join(Char.(sol)), shift=3)
+end
+
+function output_success(identifier::AbstractString)
+    dec_sol = decode_solution(identifier)
+    println((GREEN_BG*BLACK_FG)("Aufgabe $identifier richtig gelöst!"))
+    if dec_sol != nothing
+        println((BLACK_FG*LIGHT_GRAY_BG)("Musterlösung:"))
+        println(LIGHT_GRAY_BG(" "))
+        foreach(split(dec_sol,"\n")) do l
+            println(LIGHT_GRAY_BG(" "), " ", l)
+        end
+    end
+end
+
+function output_failure(identifier::AbstractString)
+    println((RED_BG)("Aufgabe $identifier falsch gelöst!"))
 end
 
 function setup(identifier::AbstractString;force::Bool=false)
@@ -61,10 +97,12 @@ macro Aufgabe(identifier::AbstractString, expr)
             result = $check_function($result)
             cd($cwd)
             JuliaSkriptumKontrolle.passed($identifier)
+            JuliaSkriptumKontrolle.output_success($identifier)
         catch e
             cd($cwd)
             JuliaSkriptumKontrolle.failed($identifier)
             if JuliaSkriptumKontrolle.RETHROW_ERRORS
+                JuliaSkriptumKontrolle.output_failure($identifier)
                 rethrow(e)
             else
                 println(e)
