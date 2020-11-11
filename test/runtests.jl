@@ -230,3 +230,10 @@ end
 
 end
 
+JuliaSkriptumKontrolle.set_solution("test 001", [105, 120, 113, 102, 119, 108, 114, 113, 35, 117, 104, 118, 43, 123, 44, 13, 35, 35, 35, 35, 108, 105, 35, 123, 35, 63, 35, 51, 13, 35, 35, 35, 35, 35, 35, 35, 35, 117, 104, 119, 120, 117, 113, 35,
+51, 49, 51, 13, 35, 35, 35, 35, 104, 111, 118, 104, 13, 35, 35, 35, 35, 35, 35, 35, 35, 123, 97, 53, 13, 35, 35, 35, 35, 104, 113, 103, 13, 104, 113, 103, 13])
+
+@testset "Encryption" begin
+    @test JuliaSkriptumKontrolle.decode(JuliaSkriptumKontrolle.encode("foo",shift=10), shift=10) == "foo"
+    @test JuliaSkriptumKontrolle.decode_solution("test 001") == "function res(x)\n    if x < 0\n        return 0.0\n    else\n        x^2\n    end\nend\n"
+end

@@ -48,17 +48,25 @@ function set_solution(identifier::AbstractString,solution)
 end
 
 function get_solution(identifier::AbstractString)
-    @assert identifier in keys(solution_data) "Aufgabe $identifier nicht gefunden!"
-    @assert identifier in keys(solution_data) "Aufgabe $identifier hat keine eingetragene Lösung!"
-    return solution_data[identifier]
+    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+    return get(solution_data,identifier,nothing)
+end
+
+function decode_solution(identifier::AbstractString)
+    sol = get_solution(identifier)
+    sol == nothing && return nothing
+    return decode(join(Char.(sol)), shift=3)
 end
 
 function output_success(identifier::AbstractString)
+    dec_sol = decode_solution(identifier)
     println((GREEN_BG*BLACK_FG)("Aufgabe $identifier richtig gelöst!"))
-    println((BLACK_FG*LIGHT_GRAY_BG)("Musterlösung:"))
-    println(LIGHT_GRAY_BG(" "))
-    foreach(split(decode(join(Char.(get_solution(identifier))), shift=3),"\n")) do l
-        println(LIGHT_GRAY_BG(" "), " ", l)
+    if dec_sol != nothing
+        println((BLACK_FG*LIGHT_GRAY_BG)("Musterlösung:"))
+        println(LIGHT_GRAY_BG(" "))
+        foreach(split(dec_sol,"\n")) do l
+            println(LIGHT_GRAY_BG(" "), " ", l)
+        end
     end
 end
 
