@@ -278,6 +278,7 @@ check_functions["11.3.8"] = function(result)
 	d1 = Dict("aa"=>4,"pp"=>1,"dd"=>3,"kk"=>19)
 	d2 = Dict("hh"=>5,"gg"=>31)
 	d3 = Dict("hh"=>5,"gg"=>31,"pp"=>10)
+    @donts result(d1,d2) :merge
 	@assert result(d1,d2) == Dict("aa"=>4,"pp"=>1,"dd"=>3,"kk"=>19,"hh"=>5,"gg"=>31)
 	@assert result(d1,d3) == Dict("aa"=>4,"pp"=>10,"dd"=>3,"kk"=>19,"hh"=>5,"gg"=>31)
 end
