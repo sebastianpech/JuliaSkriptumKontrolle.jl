@@ -231,7 +231,7 @@ end
 using Statistics    
 
 check_functions["11.3.5.1"] = function(result)
-    inrange(x) = 0.0045 <= x <= 0.0046
+    inrange(x) = 0.004 <= x <= 0.005
     @assert all(inrange.([floor(result(10000000),digits=4) for _ in 1:10])) "Fehler bei der Berechnung"
     calcs = [floor(result(10^n),digits=4) for n in 0:3]
     @assert std(calcs) != 0.0 "Keine Änderung bei Erhöhung der Iterationen."
