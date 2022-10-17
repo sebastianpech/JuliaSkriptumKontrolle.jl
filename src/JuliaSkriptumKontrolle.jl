@@ -222,8 +222,8 @@ function status()
     table = vcat(table,
                  ["" "∑" format_score(sum(scores),sum(points))])
 
-    pretty_table(
-        table,["Aufgabe","Status","Punkte"],
+    pretty_table(table,
+        header=["Aufgabe","Status","Punkte"],
         highlighters = (h1,h2,h3),
         hlines = [0,1,size(table,1),size(table,1)+1],display_size = (-1,-1), crop = :none)
 end
