@@ -89,6 +89,7 @@ macro Aufgabe(identifier::AbstractString, expr)
     temp_run_dir = mktempdir()
     cwd = pwd()
     quote
+        $(esc(expr))
         try
             JuliaSkriptumKontrolle.reset_passed($identifier)
             # Run this in the temporary directory
@@ -158,7 +159,7 @@ function eval_sandboxed(expr::Expr)
     sb = sandbox()
     # Eval part by part if is a block
     if expr.head == :block
-    N = length(expr.args)
+        N = length(expr.args)
         for (i,part) in enumerate(expr.args)
             result = Core.eval(sb,part)
             i == N && return result
