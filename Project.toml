@@ -1,7 +1,7 @@
 name = "JuliaSkriptumKontrolle"
 uuid = "e7d8a85d-98e7-4e58-bbcb-2b33d0f590e8"
 authors = ["Sebastian Pech <sebastian.pech@me.com>"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 Cassette = "7057c7e9-c182-5462-911a-8362d720325c"
