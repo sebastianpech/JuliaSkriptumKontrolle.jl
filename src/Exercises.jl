@@ -124,6 +124,7 @@ check_functions["8.5.4"] = function(result)
         @assert result(w,join(shuffle(collect(w)))) "Falsche Ausgabe. Wort ist ein Anagram."
         @assert !result(w,wd) "Falsche Ausgabe. Worst ist kein Anagram."
     end
+    @assert result("abc","CaB") "Falsche Ausgabe. Klein und großschreibung sollte ignoriert werden."
 end
 
 # 8.4.5 N-tes Element eines Dictionaries ausgeben
