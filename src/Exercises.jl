@@ -412,7 +412,8 @@ end
 check_functions["14.3.1"] = function(read_lagers)
     Random.seed!(RandomDevice())
     generate_survival_camp()
-    @dos read_lagers() :joinpath
+    # Removed this, some students use dataframes and the overdubbing takes very long
+    # @dos read_lagers() :joinpath
     for _ in 1:50
         camp = generate_survival_camp()
         bestand = read_lagers()
@@ -443,7 +444,8 @@ check_functions["14.3.2"] = function(lager_mit)
     end
     camp = generate_survival_camp()
     things = reduce(∪,all_things_in_lager.(camp))
-    @dos lager_mit(first(things),10) :joinpath
+    # Removed this, some students use dataframes and the overdubbing takes very long
+    # @dos lager_mit(first(things),10) :joinpath
     for _ in 1:50
         camp = generate_survival_camp()
         things = reduce(∪,all_things_in_lager.(camp))
@@ -460,7 +462,8 @@ end
 check_functions["14.3.3"] = function(gesamt_bestand)
     Random.seed!(RandomDevice())
     generate_survival_camp()
-    @dos gesamt_bestand() :joinpath
+    # Removed this, some students use dataframes and the overdubbing takes very long
+    # @dos gesamt_bestand() :joinpath
     for _ in 1:50
         camp = generate_survival_camp()
         total = Dict{String,Int}()
