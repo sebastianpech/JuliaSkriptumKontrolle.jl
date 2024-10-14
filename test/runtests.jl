@@ -55,7 +55,7 @@ JuliaSkriptumKontrolle.set_score("test 004",0.5)
 @testset "Check" begin
     @test all(JuliaSkriptumKontrolle.get_state.(["test 001", "test 002", "test 004"]) .== :notdone)
     @testset "test 001" begin
-        @Aufgabe "test 001" function square_if_positive(x)
+        @Exercise "test 001" function square_if_positive(x)
             if x < 0
                 return zero(x)
             else
@@ -63,7 +63,7 @@ JuliaSkriptumKontrolle.set_score("test 004",0.5)
             end
         end
         @test JuliaSkriptumKontrolle.get_state("test 001") == :passed
-        @test_throws AssertionError @Aufgabe "test 001" function square_if_positive(x)
+        @test_throws AssertionError @Exercise "test 001" function square_if_positive(x)
             if x < 0
                 return 0
             else
@@ -73,7 +73,7 @@ JuliaSkriptumKontrolle.set_score("test 004",0.5)
         @test JuliaSkriptumKontrolle.get_state("test 001") == :failed
     end
     @testset "test 002" begin
-        @Aufgabe "test 002" function double_input()
+        @Exercise "test 002" function double_input()
             counter = 0
             while true
                 inp = readline()
@@ -88,7 +88,7 @@ JuliaSkriptumKontrolle.set_score("test 004",0.5)
         @test JuliaSkriptumKontrolle.get_state("test 002") == :passed
     end
     @testset "Block Expressions" begin
-        @Aufgabe "test 004" begin
+        @Exercise "test 004" begin
             using LinearAlgebra
             a = [1,2,3]
             b = [4,5,6]
@@ -96,7 +96,7 @@ JuliaSkriptumKontrolle.set_score("test 004",0.5)
         end
         @test JuliaSkriptumKontrolle.get_state("test 004") == :passed
 
-        @test_throws AssertionError @Aufgabe "test 004" begin
+        @test_throws AssertionError @Exercise "test 004" begin
             using LinearAlgebra
             a = [1,2,3]
             b = [7,5,6]
@@ -144,7 +144,7 @@ JuliaSkriptumKontrolle.set_score("test-003",5.0)
     dirpath = joinpath(JuliaSkriptumKontrolle.exercise_data_dir,identifier)
     mkdir(dirpath)
 
-    @Aufgabe "test-003" function sometest()
+    @Exercise "test-003" function sometest()
         touch(joinpath("test-003","file"))
     end
 
@@ -203,25 +203,26 @@ end
     JuliaSkriptumKontrolle.Cassette.@overdub cnt sneaky_test_function(10,1)
     @test cnt.metadata[:abs] == 2
 
-    @test_throws AssertionError (@Aufgabe "abstest" function my_abs(x)
+    @test_throws AssertionError (@Exercise "abstest" function my_abs(x)
                                  abs(x)
                                  end)
     @test JuliaSkriptumKontrolle.get_state("abstest") == :failed
 
-    @test_throws AssertionError (@Aufgabe "abstest" begin
-                                 const hiding_this = abs
+    @test_throws AssertionError (@Exercise "abstest" begin
+                                 hiding_this = abs
                                  function my_abs(x)
-                                 hiding_this(x)
+                                    global hiding_this
+                                    hiding_this(x)
                                  end
                                  end)
 
     @test JuliaSkriptumKontrolle.get_state("abstest") == :failed
-    @Aufgabe "abstest" function my_abs(x)
+    @Exercise "abstest" function my_abs(x)
         return sign(x)*x
     end
     @test JuliaSkriptumKontrolle.get_state("abstest" ) == :passed
 
-    @test_throws AssertionError (@Aufgabe "abstest" function my_abs(x)
+    @test_throws AssertionError (@Exercise "abstest" function my_abs(x)
                                  x < 0 && return -x
                                  return x
                                  end)

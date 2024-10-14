@@ -75,7 +75,7 @@ end
 
 ## Checking exercises (Student view)
 
-A block or function can be checked by using the macro `@Aufgabe` on this function or block.
+A block or function can be checked by using the macro `@Exercise` on this function or block.
 The progress can be viewed with `JuliaSkriptumKontrolle.status()`.
 Before any of the examples is tried `JuliaSkriptumKontrolle.status()` prints:
 
@@ -92,7 +92,7 @@ Before any of the examples is tried `JuliaSkriptumKontrolle.status()` prints:
 ### Exercise 1.1
 
 ```julia
-@Aufgabe "1.1" function square_if_positive(x)
+@Exercise "1.1" function square_if_positive(x)
     return x^2
 end
 # --> ERROR: AssertionError: result(-2.0) === 0.0
@@ -107,7 +107,7 @@ end
 │         │      ∑ │ 0.0 / 6.0 │
 ```
 ```julia
-@Aufgabe "1.1" function square_if_positive(x)
+@Exercise "1.1" function square_if_positive(x)
     if x < 0
         return zero(x)
     else
@@ -128,7 +128,7 @@ end
 ### Aufgabe 1.2
 
 ```julia
-@Aufgabe "1.2" function double_input()
+@Exercise "1.2" function double_input()
     counter = 0
     while true
         inp = readline()
@@ -154,14 +154,14 @@ end
 ### Aufgabe 1.3
 
 ```julia
-@Aufgabe "1.3" function my_sum(x)
+@Exercise "1.3" function my_sum(x)
     return sum(abs.(x)) 
 end # --> ERROR: AssertionError: Verwendung von 'sum' und 'abs' nicht erlaubt!
     #                            Usage of 'sum' and 'abs' is not allowed!
 ```
 
 ```julia
-@Aufgabe "1.3" function my_sum(x)
+@Exercise "1.3" function my_sum(x)
     s = zero(eltype(x))
     for _x in x
         s += sign(_x)*_x

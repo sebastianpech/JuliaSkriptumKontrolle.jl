@@ -7,7 +7,7 @@ using Crayons.Box
 
 include(joinpath(@__DIR__, "Crypto.jl"))
 
-export @Aufgabe
+export @Exercise
 
 const exercise_data_dir = joinpath(@__DIR__,"..","exercise_data")
 
@@ -31,24 +31,24 @@ setup_functions = Dict{String,Function}()
 solution_data = Dict{String, Vector{Int}}()
 
 function set_score(identifier::AbstractString,score)
-    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+    @assert identifier in keys(check_functions) "Exercise $identifier not found."
     exercise_score[identifier] = score
 end
 
 function get_score(identifier::AbstractString)
-    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
-    @assert identifier in keys(exercise_score) "Aufgabe $identifier hat keine eingetragenen Punkte!"
+    @assert identifier in keys(check_functions) "Exercise $identifier not found."
+    @assert identifier in keys(exercise_score) "Exercise $identifier missing score."
     get_state(identifier) == :passed && return exercise_score[identifier]
     return 0.0
 end
 
 function set_solution(identifier::AbstractString,solution)
-    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+    @assert identifier in keys(check_functions) "Exercise $identifier not found."
     solution_data[identifier] = solution
 end
 
 function get_solution(identifier::AbstractString)
-    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+    @assert identifier in keys(check_functions) "Exercise $identifier not found."
     return get(solution_data,identifier,nothing)
 end
 
@@ -60,9 +60,9 @@ end
 
 function output_success(identifier::AbstractString)
     dec_sol = decode_solution(identifier)
-    println((GREEN_BG*BLACK_FG)("Aufgabe $identifier richtig gelöst!"))
+    println((GREEN_BG*BLACK_FG)("Exercise $identifier solved"))
     if dec_sol != nothing
-        println((BLACK_FG*LIGHT_GRAY_BG)("Musterlösung:"))
+        println((BLACK_FG*LIGHT_GRAY_BG)("Exemplary solution:"))
         println(LIGHT_GRAY_BG(" "))
         foreach(split(dec_sol,"\n")) do l
             println(LIGHT_GRAY_BG(" "), " ", l)
@@ -71,7 +71,7 @@ function output_success(identifier::AbstractString)
 end
 
 function output_failure(identifier::AbstractString)
-    println((RED_BG)("Aufgabe $identifier falsch gelöst!"))
+    println((RED_BG)("Exercise $identifier wrong."))
 end
 
 function setup(identifier::AbstractString;force::Bool=false)
@@ -82,8 +82,8 @@ function setup(identifier::AbstractString;force::Bool=false)
     identifier in keys(setup_functions) && setup_functions[identifier]()
 end
 
-macro Aufgabe(identifier::AbstractString, expr)
-    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+macro Exercise(identifier::AbstractString, expr)
+    @assert identifier in keys(check_functions) "Exercise $identifier not found."
     check_function = check_functions[identifier]
     result = eval_sandboxed(expr)
     temp_run_dir = mktempdir()
@@ -113,12 +113,12 @@ macro Aufgabe(identifier::AbstractString, expr)
     end
 end
 
-macro Aufgabe(expr::Expr)
-    error("Aufgabennummer nicht angegeben. Das Format ist @Aufgabe \"x.y.z\" ...")
+macro Exercise(expr::Expr)
+    error("Exercise identifier not provided. The required format is @Exercise \"x.y.z\" ...")
 end
 
 function get_state(identifier::AbstractString)
-    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+    @assert identifier in keys(check_functions) "Exercise $identifier not found."
     identifier in keys(check_function_state) || return :notdone
     return check_function_state[identifier]
 end
@@ -138,13 +138,13 @@ function reset_passed(identifier::AbstractString)
 end
 
 function passed(identifier::AbstractString)
-    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+    @assert identifier in keys(check_functions) "Exercise $identifier not found."
     check_function_state[identifier] = :passed
     nothing
 end
 
 function failed(identifier::AbstractString)
-    @assert identifier in keys(check_functions) "Aufgabe $identifier nicht gefunden!"
+    @assert identifier in keys(check_functions) "Exercise $identifier not found."
     check_function_state[identifier] = :failed
     nothing
 end
@@ -224,7 +224,7 @@ function status()
                  ["" "∑" format_score(sum(scores),sum(points))])
 
     pretty_table(table,
-        header=["Aufgabe","Status","Punkte"],
+        header=["Exercise","Status","Score"],
         highlighters = (h1,h2,h3),
         hlines = [0,1,size(table,1),size(table,1)+1],display_size = (-1,-1), crop = :none)
 end
@@ -268,18 +268,18 @@ init_ctx(::Type{CounterCtx},syms::Symbol...) =  CounterCtx(metadata=Dict([d=>0 f
 Cassette.posthook(ctx::CounterCtx, ::Any, f, args...) = check_count_function(ctx,f)
 
 join_comma_and(a) = "$a"
-join_comma_and(a,b) = "$a und $b"
-join_comma_and(c...) = join(c[1:end-1],", ")*" und $(c[end])"
+join_comma_and(a,b) = "$a and $b"
+join_comma_and(c...) = join(c[1:end-1],", ")*" and $(c[end])"
 
 function assert_donts(calls)
     invalid = ["'"*string(x.first)*"'" for x in calls if x.second > 0]
-    @assert length(invalid) == 0 "Verwendung von $(join_comma_and(invalid...)) nicht erlaubt!"
+    @assert length(invalid) == 0 "Usage of $(join_comma_and(invalid...)) not allowed."
     nothing
 end
 
 function assert_dos(calls)
     invalid = ["'"*string(x.first)*"'" for x in calls if x.second == 0]
-    @assert length(invalid) == 0 "Verwendung von $(join_comma_and(invalid...)) erforderlich!"
+    @assert length(invalid) == 0 "Usage of $(join_comma_and(invalid...)) required."
     nothing
 end
 
