@@ -102,7 +102,7 @@ macro Exercise(identifier::AbstractString, expr)
     result = eval_sandboxed(expr)
     temp_run_dir = mktempdir()
     cwd = pwd()
-    calls = collect_calls!(expr)
+    calls = collect_function_names(expr)
     quote
         $(esc(expr))
         try
@@ -263,20 +263,56 @@ function assert_dos_and_donts(identifier::AbstractString, calls)
     end
 end
 
-collect_calls!(expr) = collect_calls!(Set{Symbol}(), expr)
 
-function collect_calls!(f_calls::Set{Symbol}, expr)
-    if expr.head == :call || expr.head == :.
-        push!(f_calls, expr.args[1])
-    end
-    for e in expr.args
-        if e isa Expr
-            collect_calls!(f_calls, e)
+function get_function_name(f)
+    if f isa Symbol
+        return f
+    elseif f isa Expr && f.head == :.
+        # Handle module-prefixed functions, e.g., Dates.value
+        names = []
+        while f isa Expr && f.head == :.
+            push!(names, f.args[2])
+            f = f.args[1]
         end
+        if f isa Symbol
+            push!(names, f)
+            fullname = join(reverse(names), ".")
+            return Symbol(fullname)
+        else
+            return nothing
+        end
+    else
+        return nothing
     end
-    return f_calls
 end
 
+function collect_function_names(expr)
+    fnames = Set{Symbol}()
+
+    function traverse(x)
+        if x isa Expr
+            if x.head == :call
+                f = x.args[1]
+                fname = get_function_name(f)
+                if fname !== nothing
+                    push!(fnames, fname)
+                end
+                # Recurse on arguments
+                for arg in x.args[2:end]
+                    traverse(arg)
+                end
+            else
+                # Recurse on other expressions
+                for arg in x.args
+                    traverse(arg)
+                end
+            end
+        end
+    end
+
+    traverse(expr)
+    return fnames
+end
 
 include("./Exercises.jl")
 
