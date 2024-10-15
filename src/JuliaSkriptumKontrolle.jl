@@ -1,7 +1,6 @@
 module JuliaSkriptumKontrolle
 
 using PrettyTables
-using Cassette
 using DataStructures
 using Crayons.Box
 
@@ -28,7 +27,22 @@ check_functions = OrderedDict{String,Function}()
 exercise_score = Dict{String,Float64}()
 check_function_state = Dict{String,Symbol}()
 setup_functions = Dict{String,Function}()
+dos_functions = Dict{String,Set{Symbol}}()
+donts_functions = Dict{String,Set{Symbol}}()
 solution_data = Dict{String, Vector{Int}}()
+
+
+function dont!(identifier::AbstractString,call::Symbol...)
+    @assert identifier in keys(check_functions) "Exercise $identifier not found."
+    union!(get!(donts_functions, identifier, Set{Symbol}()), call)
+    nothing
+end
+
+function do!(identifier::AbstractString,call::Symbol...)
+    @assert identifier in keys(check_functions) "Exercise $identifier not found."
+    union!(get!(dos_functions, identifier, Set{Symbol}()), call)
+    nothing
+end
 
 function set_score(identifier::AbstractString,score)
     @assert identifier in keys(check_functions) "Exercise $identifier not found."
@@ -54,7 +68,7 @@ end
 
 function decode_solution(identifier::AbstractString)
     sol = get_solution(identifier)
-    sol == nothing && return nothing
+    sol === nothing && return nothing
     return decode(join(Char.(sol)), shift=3)
 end
 
@@ -88,6 +102,7 @@ macro Exercise(identifier::AbstractString, expr)
     result = eval_sandboxed(expr)
     temp_run_dir = mktempdir()
     cwd = pwd()
+    calls = collect_calls!(expr)
     quote
         $(esc(expr))
         try
@@ -95,6 +110,7 @@ macro Exercise(identifier::AbstractString, expr)
             # Run this in the temporary directory
             cd($temp_run_dir)
             JuliaSkriptumKontrolle.setup($identifier,force=true)
+            JuliaSkriptumKontrolle.assert_dos_and_donts($identifier, $calls)
             result = $check_function($result)
             cd($cwd)
             JuliaSkriptumKontrolle.passed($identifier)
@@ -229,75 +245,38 @@ function status()
         hlines = [0,1,size(table,1),size(table,1)+1],display_size = (-1,-1), crop = :none)
 end
 
-Cassette.@context CounterCtx
-
-isrelated(t::Type,name) = isrelated(string(t.name.name),name)
-isrelated(t::DataType,name) = isrelated(string(t.name.name),name)
-isrelated(t::UnionAll,name) = false
-isrelated(f::Function,name) = isrelated(string(typeof(f).name.name),name)
-function isrelated(f::T,name) where T
-    if typeof(T) <: DataType
-        return isrelated(string(T.name.name),name)
+function assert_dos_and_donts(identifier::AbstractString, calls)
+    @assert identifier in keys(check_functions) "Exercise $identifier not found."
+    if identifier in keys(dos_functions)
+        for do_call in dos_functions[identifier]
+            if !(do_call in calls)
+                error("Usage of '$(do_call)' is required. Find a solution where you use '$(do_call)'.")
+            end
+        end
     end
-    return false
-end
-
-function isrelated(fname::AbstractString,name)
-    if fname == "#$name" || fname == string(name)
-        return true
-    end
-    if startswith(fname,"#kw##$name")
-        return true
-    end
-    if startswith(fname,"##$name#")
-        return true
-    end
-    return false
-end
-
-function check_count_function(ctx::CounterCtx,f)
-    for fname in keys(ctx.metadata)
-        if isrelated(f,fname)
-            ctx.metadata[fname] += 1
+    if identifier in keys(donts_functions)
+        for dont_call in donts_functions[identifier]
+            if dont_call in calls
+                error("Usage of '$(dont_call)' is not allowed. Find a solution without using $(dont_call).")
+            end
         end
     end
 end
 
-init_ctx(::Type{CounterCtx},syms::Symbol...) =  CounterCtx(metadata=Dict([d=>0 for d in syms]))
+collect_calls!(expr) = collect_calls!(Set{Symbol}(), expr)
 
-Cassette.posthook(ctx::CounterCtx, ::Any, f, args...) = check_count_function(ctx,f)
-
-join_comma_and(a) = "$a"
-join_comma_and(a,b) = "$a and $b"
-join_comma_and(c...) = join(c[1:end-1],", ")*" and $(c[end])"
-
-function assert_donts(calls)
-    invalid = ["'"*string(x.first)*"'" for x in calls if x.second > 0]
-    @assert length(invalid) == 0 "Usage of $(join_comma_and(invalid...)) not allowed."
-    nothing
+function collect_calls!(f_calls::Set{Symbol}, expr)
+    if expr.head == :call || expr.head == :.
+        push!(f_calls, expr.args[1])
+    end
+    for e in expr.args
+        if e isa Expr
+            collect_calls!(f_calls, e)
+        end
+    end
+    return f_calls
 end
 
-function assert_dos(calls)
-    invalid = ["'"*string(x.first)*"'" for x in calls if x.second == 0]
-    @assert length(invalid) == 0 "Usage of $(join_comma_and(invalid...)) required."
-    nothing
-end
-
-macro dos(fcall,ex...)
-    esc(quote
-        cnt = JuliaSkriptumKontrolle.init_ctx(JuliaSkriptumKontrolle.CounterCtx,$(ex...))
-        JuliaSkriptumKontrolle.Cassette.@overdub cnt $fcall
-        JuliaSkriptumKontrolle.assert_dos(cnt.metadata)
-        end)
-end
-
-macro donts(fcall,ex...)
-    esc(quote
-        cnt = JuliaSkriptumKontrolle.init_ctx(JuliaSkriptumKontrolle.CounterCtx,$(ex...))
-        JuliaSkriptumKontrolle.Cassette.@overdub cnt $fcall
-        JuliaSkriptumKontrolle.assert_donts(cnt.metadata)
-        end)
-end
 
 include("./Exercises.jl")
 

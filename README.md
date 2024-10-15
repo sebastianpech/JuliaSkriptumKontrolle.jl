@@ -57,8 +57,8 @@ end
 
 Often exercises require students to rewrite already existing functions.
 By just checking the result, those exercises would be very simple, because the already implemented version could be used.
-For such cases the macros `@dos` and `@donts` are provided.
-The macro throws an `AssertionError` if a wrong function is used.
+For such cases the functions `do!` and `dont!` are provided.
+The macro throws an `ErrorException` if a wrong function is used.
 In the following example a function should be written that sums the absolute values of all numbers provided, without using `sum` and `abs` but using `sign`.
 
 ```julia
@@ -80,13 +80,13 @@ The progress can be viewed with `JuliaSkriptumKontrolle.status()`.
 Before any of the examples is tried `JuliaSkriptumKontrolle.status()` prints:
 
 ```
-│ Aufgabe │ Status │    Punkte │
-├─────────┼────────┼───────────┤
-│     1.1 │      ? │       1.0 │
-│     1.2 │      ? │       2.0 │
-│     1.3 │      ? │       3.0 │
-├─────────┼────────┼───────────┤
-│         │      ∑ │ 0.0 / 6.0 │
+│ Exercise │ Status │     Score │
+├──────────┼────────┼───────────┤
+│      1.1 │      ? │       1.0 │
+│      1.2 │      ? │       2.0 │
+│      1.3 │      ? │       3.0 │
+├──────────┼────────┼───────────┤
+│          │      ∑ │ 0.0 / 6.0 │
 ```
 
 ### Exercise 1.1
@@ -99,12 +99,13 @@ end
 ```
 
 ```
-│ Aufgabe │ Status │    Punkte │
-│     1.1 │      × │       1.0 │
-│     1.2 │      ? │       2.0 │
-│     1.3 │      ? │       3.0 │
-├─────────┼────────┼───────────┤
-│         │      ∑ │ 0.0 / 6.0 │
+│ Exercise │ Status │     Score │
+├──────────┼────────┼───────────┤
+│      1.1 │      × │       1.0 │
+│      1.2 │      ? │       2.0 │
+│      1.3 │      ? │       3.0 │
+├──────────┼────────┼───────────┤
+│          │      ∑ │ 0.0 / 6.0 │
 ```
 ```julia
 @Exercise "1.1" function square_if_positive(x)
@@ -117,12 +118,13 @@ end
 ```
 
 ```
-│ Aufgabe │ Status │    Punkte │
-│     1.1 │      ✓ │       1.0 │
-│     1.2 │      ? │       2.0 │
-│     1.3 │      ? │       3.0 │
-├─────────┼────────┼───────────┤
-│         │      ∑ │ 1.0 / 6.0 │
+│ Exercise │ Status │     Score │
+├──────────┼────────┼───────────┤
+│      1.1 │      ✓ │       1.0 │
+│      1.2 │      ? │       2.0 │
+│      1.3 │      ? │       3.0 │
+├──────────┼────────┼───────────┤
+│          │      ∑ │ 1.0 / 6.0 │
 ```
 
 ### Aufgabe 1.2
@@ -143,12 +145,13 @@ end
 ```
 
 ```
-│ Aufgabe │ Status │    Punkte │
-│     1.1 │      ✓ │       1.0 │
-│     1.2 │      ✓ │       2.0 │
-│     1.3 │      ? │       3.0 │
-├─────────┼────────┼───────────┤
-│         │      ∑ │ 3.0 / 6.0 │
+│ Exercise │ Status │     Score │
+├──────────┼────────┼───────────┤
+│      1.1 │      ✓ │       1.0 │
+│      1.2 │      ✓ │       2.0 │
+│      1.3 │      ? │       3.0 │
+├──────────┼────────┼───────────┤
+│          │      ∑ │ 3.0 / 6.0 │
 ```
 
 ### Aufgabe 1.3
@@ -156,8 +159,7 @@ end
 ```julia
 @Exercise "1.3" function my_sum(x)
     return sum(abs.(x)) 
-end # --> ERROR: AssertionError: Verwendung von 'sum' und 'abs' nicht erlaubt!
-    #                            Usage of 'sum' and 'abs' is not allowed!
+end # --> ERROR: Usage of 'sign' is required. Find a solution where you use 'sign'.
 ```
 
 ```julia
@@ -171,12 +173,13 @@ end
 ```
 
 ```
-│ Aufgabe │ Status │    Punkte │
-│     1.1 │      ✓ │       1.0 │
-│     1.2 │      ✓ │       2.0 │
-│     1.3 │      ✓ │       3.0 │
-├─────────┼────────┼───────────┤
-│         │      ∑ │ 6.0 / 6.0 │
+│ Exercise │ Status │     Score │
+├──────────┼────────┼───────────┤
+│      1.1 │      ✓ │       1.0 │
+│      1.2 │      ✓ │       2.0 │
+│      1.3 │      ✓ │       3.0 │
+├──────────┼────────┼───────────┤
+│          │      ∑ │ 6.0 / 6.0 │
 ```
 
 ## Batch checking
