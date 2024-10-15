@@ -263,7 +263,6 @@ function assert_dos_and_donts(identifier::AbstractString, calls)
     end
 end
 
-
 function get_function_name(f)
     if f isa Symbol
         return f
@@ -296,6 +295,12 @@ function collect_function_names(expr)
                 fname = get_function_name(f)
                 if fname !== nothing
                     push!(fnames, fname)
+                    # Check if the unexported name is used. Eg., if split is not allowed 
+                    # without the next lines one could easily bypass this by using Base.split
+                    _sfname = string(fname)
+                    if occursin(".", _sfname)
+                        push!(fnames, Symbol(split(_sfname, ".")[end][2:end]))
+                    end
                 end
                 # Recurse on arguments
                 for arg in x.args[2:end]

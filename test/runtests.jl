@@ -169,23 +169,37 @@ end
 dont!("abstest",:abs)
 do!("abstest",:sign)
 
+# Define check function calculate abs without using abs
+JuliaSkriptumKontrolle.check_functions["split"] = function(result)
+    nothing
+end
+dont!("split",:split)
+
 @testset "Do's and Dont's" begin
-    @test_throws ErrorException (@Exercise "abstest" function my_abs(x)
+    @test_throws ErrorException (@Exercise "abstest" function f1(x)
                                  abs(x)
                                  end)
     @test JuliaSkriptumKontrolle.get_state("abstest") == :failed
 
-    @Exercise "abstest" function my_abs(x)
+    @Exercise "abstest" function f5(x)
         return sign(x)*x
     end
     @test JuliaSkriptumKontrolle.get_state("abstest" ) == :passed
 
-    @test_throws ErrorException (@Exercise "abstest" function my_abs(x)
+    @test_throws ErrorException (@Exercise "abstest" function f2(x)
                                  x < 0 && return -x
                                  return x
                                  end)
 
     @test JuliaSkriptumKontrolle.get_state("abstest") == :failed
+
+    @test_throws ErrorException (@Exercise "split" function f3(x)
+        split("asdf", "1")
+                                 end)
+    @test_throws ErrorException (@Exercise "split" function f4(x)
+        Base.split("asdf", "1")
+                                 end)
+
 end
 
 JuliaSkriptumKontrolle.set_solution("test 001", [105, 120, 113, 102, 119, 108, 114, 113, 35, 117, 104, 118, 43, 123, 44, 13, 35, 35, 35, 35, 108, 105, 35, 123, 35, 63, 35, 51, 13, 35, 35, 35, 35, 35, 35, 35, 35, 117, 104, 119, 120, 117, 113, 35,
